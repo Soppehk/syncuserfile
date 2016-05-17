@@ -1,0 +1,88 @@
+Turbo Assembler	 Version 2.0	    02/11/15 23:39:06	    Page 1
+3bc2015.ASM
+
+
+
+      1	0000				     .model  small	     ;direttive	per l'assemblatore
+      2	0000				     .stack  100h	     ;segmento stack
+      3
+      4	0000				     .data		     ;segmento dati
+      5	0000  50 72 69 6D 6F 20	70+  str1    db	     "Primo programma"
+      6	      72 6F 67 72 61 6D	6D+
+      7	      61
+      8	000F  05		     num1    db	     5
+      9	0010  FC		     num2    db	     -4
+     10	0011  ??		     ris     db	     ?
+     11	0012  61		     car1    db	     'a'
+     12	0013  41		     car2    db	     'A'
+     13	0014  ??		     car3    db	     ?
+     14	0015  7530		     num11   dw	     30000
+     15	0017  B1E0		     num22   dw	     -20000
+     16	0019  ????		     num33   dw	     ?
+     17	001B  C1080000		     unof    dd	     -8.5
+     18	001F  3E800000		     duef    dd	     0.25
+     19
+     20	0023				     .code		     ;segmento codice
+     21	0000  B8 0000s		     inizio: mov     ax,@data		     ;inizializza registri segmento
+     22	0003  8E D8			     mov     ds,ax
+     23	0005  8E C0			     mov     es,ax
+     24	0007  2B C0			     sub     ax,ax
+     25	0009  A0 000Fr			     mov     al,num1
+     26	000C  8A 1E 0010r		     mov     bl,num2
+     27	0010  02 C3			     add     al,bl
+     28	0012  A2 0011r			     mov     ris,al
+     29	0015  B0 64			     mov     al,100
+     30	0017  04 96			     add     al,150
+     31	0019  8A 0E 0012r		     mov     cl,car1
+     32	001D  FE C1			     inc     cl
+     33	001F  88 0E 0014r		     mov     car3,cl
+     34	0023  8B 16 0015r		     mov     dx,num11
+     35	0027  03 16 0017r		     add     dx,num22
+     36	002B  89 16 0019r		     mov     num33,dx
+     37
+     38	002F  B4 4C		     esci:   mov     ah,4ch		     ;esce e torna al dos
+     39	0031  CD 21			     int     21h
+     40					     end     inizio
+Turbo Assembler	 Version 2.0	    02/11/15 23:39:06	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/11/15"
+??FILENAME			  Text	 "3bc2015 "
+??TIME				  Text	 "23:39:06"
+??VERSION			  Number 0200
+@CODE				  Text	 _TEXT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 3BC2015
+@MODEL				  Text	 2
+@WORDSIZE			  Text	 2
+CAR1				  Byte	 DGROUP:0012
+CAR2				  Byte	 DGROUP:0013
+CAR3				  Byte	 DGROUP:0014
+DUEF				  Dword	 DGROUP:001F
+ESCI				  Near	 _TEXT:002F
+INIZIO				  Near	 _TEXT:0000
+NUM1				  Byte	 DGROUP:000F
+NUM11				  Word	 DGROUP:0015
+NUM2				  Byte	 DGROUP:0010
+NUM22				  Word	 DGROUP:0017
+NUM33				  Word	 DGROUP:0019
+RIS				  Byte	 DGROUP:0011
+STR1				  Byte	 DGROUP:0000
+UNOF				  Dword	 DGROUP:001B
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  STACK				  16  0100 Para	  Stack	  STACK
+  _DATA				  16  0023 Word	  Public  DATA
+_TEXT				  16  0033 Word	  Public  CODE
+

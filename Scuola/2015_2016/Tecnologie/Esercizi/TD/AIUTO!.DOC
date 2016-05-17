@@ -1,0 +1,527 @@
+
+          TURBO DEBUGGER 2.0 DOMANDE E RISPOSTE COMUNI
+          =============================================
+
+Di seguito viene presentata una lista delle domande fatte pió
+comunemente riguardo a Turbo Debugger. Dopo questa lista verranno
+spiegate alcune delle nuove funzionalitÖ del mouse di Turbo
+Debugger 2.0.
+
+1.   Come viene gestito l'output dello schermo di programmi in
+     modalitÖ grafica e basati sul testo da TD?
+
+     Turbo Debugger dispone di molte strategie per controllare
+     come e quando lo schermo viene rigenerato. Se si sta
+     eseguendo il debugging di un programma che utilizza una
+     modalitÖ di visualizzazione grafica, e si desidera
+     richiamare un programma di servizio a comparsa - come il
+     Sidekick ed il Sidekick Plus della Borland - mentre ci si
+     trova all'interno di Turbo Debugger, oppure se si desidera
+     eseguire tramite il comando DOS Shell di Turbo Debugger un
+     programma che scrive direttamente nella memoria video,
+     allora ä consigliabile tenere a mente i seguenti consigli.
+
+     La modalitÖ standard di aggiornamento dello schermo ä
+     "Flip"; questo significa che Turbo Debugger utilizza una
+     pagina video alternata sugli adattatori che si avvalgono di
+     pagine video multiple. Questo si verifica nello scambio di
+     schermi veloce tra Turbo Debugger e il programma, ma puï
+     anche interferire con l'operazione dei programmi di servizio
+     a comparsa e i programmi in modalitÖ grafica.
+
+     I programmi di servizio a comparsa potrebbero non apparire
+     sullo schermo, anche se sono attivi ed elaborano le sequenze
+     di tasti. Occorre selezionare la modalitÖ "Swap" per
+     l'aggiornamento dello schermo e per far sç che questi
+     programmi funzionino correttamente. Per poter far questo si
+     usi l'opzione -ds della riga di comando di Turbo Debugger,
+     oppure si usi il programma di servizio TDINST per impostare
+     in modo permanente questa modalitÖ. La modalitÖ "Swap" attua
+     un'aggiornamento dello schermo pió lento, ma assicura che
+     Turbo Debugger non interferisca nÇ con la visualizzazione
+     del programma che si sta eseguendo, nÇ con quella di altri
+     programmi.
+
+     Si potrebbe anche utilizzare "Swap" quando si usa il comando
+     DOS Shell o si esegue un editor all'interno di Turbo
+     Debugger. La maggior parte dei programmi prevede di essere
+     eseguita sulla pagina video 0 e non controlla quale sia la
+     pagina video corrente. Il comando DOS Shell di Turbo Debugger
+     e qualsiasi editor che viene eseguito da Turbo Debugger nella
+     modalitÖ "Flip" non viene eseguito sulla pagina video 0, e i
+     programmi potrebbero sembrare sospesi, anche se si riusciranno
+     a digitare normalmente le sequenze di tasti. Se accade questo,
+     si usi l'opzione - ds della riga di comando quando si esegue
+     Turbo Debugger o si installi di nuovo Turbo Debugger in modo
+     che usi la modalitÖ "Swap" invece di quella "Flip".
+
+     Se si sta effettuando il debugging di un programma
+     applicativo in modalitÖ grafica, occorre specificare
+     l'opzione -ds  della riga di comando (la modalitÖ "Swap") e,
+     se si vuole, anche l'opzione - vg della riga di comando
+     (Graphics Save). In questo modo la memoria supplementare
+     viene impostata a parte per memorizzare l'intera immagine
+     grafica prodotta dal programma. Se non si usa questa
+     opzione, potrebbe apparire una "macchia rossa" sullo schermo
+     del programma. Queste opzioni possono anche essere impostate
+     im modo permanente usando il programma TDINST. L'opzione
+     Graphics Save richiede 8K in pió di memoria e rallenta lo
+     scambio degli schermi.
+
+     Se si sta eseguendo un programma in modalitÖ grafica che
+     cambia la palette EGA, occorre accertarsi che l'opzione
+     -vp della riga di comando memorizzi la palette.
+
+2.   Turbo Debugger ä in grado di usare altri programmi mentre si
+     sta ancora utilizzando il debugger?
+
+     I comandi DOS Shell e Edit nelle finestre Module e File
+     possono trasferire il programma sottoposto a debugging sul
+     disco al fine di creare spazio per l'esecuzione del DOS o
+     dell'editor. La quantitÖ di memoria standard che viene
+     trasferita ä 128K. Si puï usare TDINST per impostare una
+     quantitÖ di memoria diversa se non vi ä memoria sufficiente
+     per eseguire l'editor o l'altro programma. Impostando la
+     dimensione del trasferimento di memoria ad OK si richiederÖ
+     a Turbo Debugger di trasferire tutto il programma utente sul
+     disco prima di lanciare l'interprete dei comandi del DOS.
+
+
+     Solo il programma utente viene trasferito sul disco; Turbo
+     Debugger resta in memoria.
+
+3.   Come si puï interrompere un programma anche quando gli
+     interrupt risultano disattivati?
+
+     Se si dispone di un computer basato su un processore 80386 e
+     si sta utilizzando TD386, l'opzione -B consente
+     l'interruzione anche quando gli interrupt sono disattivati.
+     Ad esempio, questa opzione attiva un'interruzione:
+
+          CLI
+          JMP  $
+
+4.   PerchÇ non si puï premere Ctrl-Break per uscire dal
+     programma che si sta eseguendo su una macchina remota?
+
+     Il programma che si sta eseguendo sulla macchina remota ha
+     assunto il controllo dell'interrupt 1B (Ctrl-Break).
+     TDREMOTE non riprende il controllo dell'interrupt 1B finchÇ
+     non si ferma l'esecuzione del programma dalla parte del
+     debugger portandone a conclusione l'esecuzione oppure
+     premendo Ctrl-F2 (Program Reset).
+
+5.   Quali sono alcune delle differenze sintattiche e di analisi
+     lessicale tra l'assemblatore integrato di Turbo Debugger e
+     quello autonomo di Turbo Assembler?
+
+     Dopo questo breve programma d'esempio, seguirÖ una descrizione.
+
+                .model small
+                .data
+
+         abc    struc
+         mem1   dd      ?
+         mem2   db      ?
+         mem3   db      "   "
+         abc    ends
+
+                align   16
+         a      abc     <1,2, "xyz">
+
+         msg1   db      "testing 1 2 3", 0
+         msg2   db      "hello word", 0
+         nmptr  dw      msg1
+         fmptr  dd      msg1,msg2
+         nfmptr dw      fmptr
+         xx     dw      seg a
+
+                .code
+                push  cs
+                pop   ds
+                mov   bx,offset a
+                mov   bx,nmptr
+                les   si,fmptr
+                mov   ah,4ch
+                int   21h
+                end
+
+     L'analizzatore lessicale delle espressioni dell'assemblatore
+     non accetta tutti gli operandi di istruzione legali per
+     TASM. Questo consente alle espressioni dell'assemblatore di
+     Turbo Debugger di essere pió generale e inoltre di disporre
+     di livelli multipli di indirizzamento della memoria, pió
+     simile a quello usato in C e in Pascal. Tuttavia, ci sono
+     pochi costrutti a cui si potrebbe essere abituati che si
+     dovranno specificare in modo diverso per fare sç che
+     l'analizzatore lessicale delle espressioni dell'assemblatore
+     di Turbo Debugger li accetti:
+
+        a. Le forzature delle dimensioni dovrebbero sempre
+           apparire tra parentesi quadre; PTR ä facoltativa dopo
+           la dimensione. Anche quando ci si riferisce ad una
+           struttura, si deve usare il nome della variabile:
+
+               OK:  [byte ptr bx]  [dword si]     [abc bx]
+               NO:  byte ptr [bx]  [struc abc bx] [a bx]
+
+        b. Occorre specificare il nome di una struttura quando si
+           accede agli elementi di una struttura, attraverso un
+           puntatore di registro:
+
+               OK:  [abc ptr bx].mem1   [abc bx].mem3 + 1
+               NO:  [bx].mem1
+
+        c. Non si possono usare delle istanze multiple di [] a
+           meno che non siano adiacenti, e si puï far seguire
+           solo un'espressione [] da un punto e il nome di un
+           membro di struttura membro o un'altra espressione []:
+
+               OK:  4[bx] [si]     [abc bx].mem2
+               NO:  [bx]4[si]      [bx]+4
+
+        d. Se si usa un registro come parte di un'espressione di
+           memoria e non si desidera specificare una dimensione,
+           viene supposta WORD:
+
+               [bx] ä lo stesso di [word bx]
+
+        e. Si puï usare qualsiasi registro si desidera tra [],
+           non solo le combinazioni di BX, BP, SI e DI consentite
+           negli oprandi di istruzione:
+
+               OK:  [ax+bx]   [bx+sp]
+
+        f. Si possono usare molti livelli di [] per seguire le
+           catene di puntatori:
+
+               OK:  [byte  [[nfmptr]+4]]
+
+        g. Si faccia attenzione nell'usare i registri per
+           accedere alle locazioni di memoria. Si potrebbero
+           ottenere dei risultati imprevisti se i registri del
+           segmento non sono impostati correttamente. Se non si
+           specifica esplicitamente il registro segmento, Turbo
+           Debugger utilizza il registro DS per indicare la
+           memoria.
+
+        h. Quando si specifica un registro segmento, occorre
+           accertarsi di seguire la stessa regola per le
+           forzature delle dimensioni: la si racchiuda tra
+           parentesi quadre:
+
+               OK:  [byte es:di]   [es:fmptr]
+               NO:  es:[byte di]
+
+        i. Si utilizzi l'operatore OFFSET per ottenere
+           l'indirizzo di una variabile o di una struttura. Turbo
+           Debugger fornirÖ automaticamente le [] attorno al nome
+           di una variabile se si digita solo il nome della
+           variabile:
+
+               a         contenuto della struttura a
+               [a]       contenuto della struttura a
+               offset a  indirizzo della struttura a
+
+        j. Si puï utilizzare la forzatura di tipo e il conteggio
+           del controllo del formato per esaminare qualsiasi area
+           di memoria visualizzata come si desidera:
+
+               [byte es:bx],10     10 byte indicati da es:bx
+               [dword ds:si],4     4 dword indicate da ds:si
+
+           Questo ä molto utile quando si specificano le
+           espressioni di osservazione.
+
+        k. Qualche volta si usa una locazione di memoria word o
+           un registro per puntare ad un paragrafo in memoria che
+           contiene una struttura di dati. Si acceda alla
+           struttura con la seguente espressione:
+
+               [abc [xx]:0].mem1
+               [abc es:0].mem3
+
+6.   Esistono delle differenze sintattiche o di analisi lessicale
+     tra la valtazione delle espressioni in C di Turbo Debugger e
+     quelle di Turbo C++?
+
+     Non ä possibile fornire degli argomenti di stringa di
+     costanti quando si valutano le funzioni .
+
+          OK:  miafunz(123)   miafunz(variabile_stringa)
+          NO:  miafunz("costante")
+
+7.   Esistono delle differenze sintattiche o di analisi lessicale
+     tra la valutazione delle espressioni in Pascal di Turbo
+     Debugger e quelle di Turbo Pascal?
+
+     a.   Turbo Debugger non si avvale di espressioni per i
+          costruttori degli insiemi:
+
+               OK:  [4..7]
+               NO:  [miavar1..miavar2] [3+4..7+8]
+     b.   Non si possono fornire degli argomenti di stringa di
+          costanti quando si valutano le funzioni o le procedure.
+
+               OK:  MiaFunz(123)   MiaFunz(VariabileStringa)
+               NO:  MiaFunz ("Costante")
+
+                    MiaFunz(CostanteStringa), dove
+                    CostanteStringa ä definita con una
+                    dichiarazione "const" e non ä una costante di
+                    tipo.
+
+     c.   Non si possono valutare le procedure o le funzioni che
+          presentano dei parametri VALUE di strutture, ma si
+          possono valutare le procedure o le funzioni che
+          presentano dei parametri VARIABLE di strutture.
+
+8    A cosa bisogna stare attenti quando si esegue il debugging
+     di programmi a pió linguaggi con Turbo Debugger? Il linguaggio
+     sorgente standard di Turbo Debugger ä "Source", cioä il
+     linguaggio delle espressioni ä basato sul modulo sorgente
+     corrente. Questo potrebbe creare confusione se il programma
+     ha dei moduli sorgente scritti in linguaggi diversi (come il
+     C e l'assembly). Si potrebbero avere dei risultati imprevisti,
+     poichÇ, si sta introducendo un'espressione in un ben determinato
+     linguaggio ogni volta che Turbo Debugger richiede un valore o un
+     indirizzo:
+
+     a.   Anche se ci si trova in una finestra CPU o in una
+          finestra DUMP, si devono ancora introdurre degli
+          indirizzi nel linguaggio sorgente, nonostante la
+          finestra stia mostrando i valori in forma esadecimale.
+          Ad esempio, per visualizzare il contenuto
+          dell'indirizzo in memoria 1234:5678, si deve digitare
+          una delle seguenti espressioni, a seconda del
+          linguaggio sorgente corrente:
+
+               C         0x1234:0x5678
+               Pascal    $1234:$56787
+               assembly  1234:5678
+
+     b.   Quando il linguaggio corrente ä assembly, bisogna stare
+          attenti quando si introducono dei numeri esadecimali,
+          poichÇ vengono interpretati esattamente come lo
+          sarebbero nel file sorgente in assembly. Questo
+          significa che se si vuole introdurre un numero che
+          inizia con una delle cifre esadecimali A-F, occorre far
+          precedere la lettera da uno 0 cosç Turbo Debugger sa
+          che si sta introducendo un numero. Allo stesso modo, se
+          il numero termina con B o D (indicando un numero
+          binario o decimale), occorre aggiungere H per indicare
+          che si vuole effettivamente un numero esadecimale:
+
+               OK:  Oaaaa     123dh     89abh
+               NO:  aaaa      123d      89ab
+9.   PerchÇ compare il testo "Cannot be changed" quando si esegue
+     un assegnamento con il comando Data/Evaluate/Modify del
+     riquadro "New Value"?
+
+     Se si utilizza il comando Data/Evaluate/Modify (Ctrl-F4) per
+     modificare una variabile tramite assegnamento diretto, il
+     riquadro "New Value" indicherÖ "Cannot be changed". Questo
+     non significa che l'assegnamento non si ä prodotto, ma che
+     l'intera espressione di assegnamento non ä un'espressione
+     che fa riferimento alla memoria il cui valore puï essere
+     cambiato spostandosi nel riquadro in basso. Ecco qui alcuni
+     esempi di espressioni di assegnamento diretto:
+
+               C         x = 4
+               Pascal    ratio := 1,234
+               assembly  wval = 4 shl 2
+
+     Se si fosse digitato solo "x", "ratio", o "wval" nel
+     riquadro in alto, sarebbe stato possibile spostarsi nel
+     riquadro in basso ed introdurre un nuovo valore. Il metodo
+     di assegnamento diretto con l'operatore di assegnamento "="
+     o ":" ä pió veloce e pió comodo se non si desidera esaminare
+     il valore della variabile prima di modificarlo.
+
+10.  PerchÇ un ispettore visualizza occasionalmente dei punti
+     interrogativi quando si ispeziona una variabile register Di
+     Turbo C++?
+
+     Se si ispeziona una variabile register che non si trova nel
+     campo di validitÖ corrente, si noteranno dei ???? al posto
+     del valore. La variabile register visualizza un valore solo
+     se il registro si trova nel campo di validitÖ corrente
+     (valido in corrispondenza della posizione corrente nel
+     programma).
+
+11.  Qual'ä la ragione per cui Turbo Debugger si blocca se viene
+     avviato su un computer compatibile PC?
+
+     Se il computer ä un Tandy 1000A, un PC convertibile IBM, o
+     un NEC MultiSpeed, o se Turbo Debugger si blocca quando si
+     carica sul sistema, si utilizzi TDINST e si cambi la voce
+     nel menu Options\Miscellaneous in modo che l'intercettazione
+     dell'NMI risulti disattivata. Alcuni computer usano l'NMI
+     (Interrupt Non Mascherabile) in modi che contrastano con
+     Turbo Debugger, cosç si rende necessario disattivare l'uso
+     di questo interrupt per poter eseguire il programma.
+
+     Anche quando si sta utilizzando una macchina basata
+     sull'80386 e si ä caricato il programma di servizio
+     SuperKey, si faccia attenzione a non premere un tasto mentre
+     si sta lavorando con TD386, poichÇ SuperKey potrebbe
+     catturare i tasto e causare dei risultati imprevisti.
+
+12.  Cosa potrebbe accadere quando vengono impostati dei punti di
+     arresto globali sulle variabili locali?
+
+     Quando si impostano dei punti di arresto globali utilizzando
+     delle variabili locali, occorre accertarsi che i punti di
+     arresto siano cancellati prima di uscire dalla procedura o
+     dalla funzione in cui le variabili vengono definite. Il modo
+     migliore per fare questo ä quello di inserire un punto di
+     arresto sull'ultima riga della procedura o della funzione.
+     Se non si cancellano i punti di arresto, il programma si
+     interromperÖ improvvisamente e potrebbe anche bloccare la
+     macchina perchÇ i punti di arresto sono stati impostati
+     nella memoria che non ä stata usata al momento dalla
+     procedura o dalla funzione.
+
+13.  Come si possono memorizzare le opzioni impostate con TDINST
+     in TD286.EXE?
+
+     Se si dispone di un file di configurazione (tdconfig.td) giÖ
+     creato per TD.EXE, TD286.EXE utilizzerÖ automaticamente
+     questo file di configurazione. Una configurazione fatta in
+     TDINST si puï memorizzare direttamente in TD286.EXE se
+     questo viene specificato sulla riga di comando. Ad esempio,
+
+          TDINST TD286.EXE
+
+     Quando si vuole memorizzare questa configurazione in TDINST,
+     basta selezionare Save\Modify td.exe.
+
+14.  PerchÇ l'esecuzione ä pió lenta quando si traccia (F7) che
+     quando si esegue passo a passo (F8) il programma?
+
+     Turbo Debugger ha ora la capacitÖ di eseguire in modo
+     inverso. Questo significa che quando si sta tracciando passo
+     a passo il programma, Turbo Debugger memorizza tutte le
+     informazioni della riga sorgente che si sono appena
+     tracciate. Se si desidera un'esecuzione pió veloce, si
+     possono eseguire passo a passo (F8) le instruzioni, oppure
+     cambiare l'opzione Full History a "No" nella finestra
+     Execution History.
+
+
+***  Domande comuni sull'uso del mouse in Turbo Debugger 2.0.
+--------------------------------------------------------------
+
+Turbo Debugger 2.0 ä in grado di riconoscere un mouse che
+consente di manipolare gli elementi all'interno dell'interfaccia
+utente. La seguente lista elenca i termini che si riferiscono al
+mouse nel contesto di Turbo Debugger.
+
+Se si dispone di un driver per il mouse giÖ installato, Turbo
+Debugger e TDINST cercheranno di utilizzare il mouse. Se durante
+una sessione di debugging non si desidera utilizzare il mouse, ä
+possibile utilizzare l'opzione -p della riga di comando per
+disattivarlo. Questo puï essere impostato anche in TDINST nella
+finestra di dialogo Options\Input & prompting.
+
+Selezione e trascinamento con il mouse
+     La maggior parte di mouse dispone di due o tre pulsanti che
+     consentono varie funzioni all'interno di un programma
+     applicativo. In Turbo Debugger ä possibile, fra le altre
+     cose, usare il pulsante di sinistra del mouse per
+     selezionare le opzioni, spostare le voci sullo schermo, e
+     impostare i punti di arresto. Il pulsante di destra del
+     mouse presenta alcune delle funzioni di quello di sinistra,
+     e inoltre consente di aprire i menu locali all'interno delle
+     finestre. Facendo un doppio clic con il mouse sulle opzioni
+     di una lista si potrÖ selezionare quella voce. Ad esempio,
+     nella finestra di dialogo File\Open sarÖ possibile
+     evidenziare un file facendo clic con il mouse sul nome del
+     file. Anche i comandi indicati nella parte inferiore dello
+     schermo, come F1-Help, possono essere selezionati con il
+     mouse. Il trascinamento del mouse consiste nel premere il
+     pulsante del mouse e spostare il cursore del mouse in
+     un'altra posizione.
+
+Il driver del mouse
+     Il driver del mouse ä il programma che viene installato per
+     attivare il mouse all'interno di Turbo Debugger e di altri
+     programmi. La maggior parte di driver di mouse potrÖ essere
+     utilizzata con Turbo Debugger ma si potrebbe doverla
+     aggiornare alla versione pió recente se si riscontrano dei
+     problemi usando una versione pió vecchia. Se si incontrano
+     dei problemi con il mouse una volta che si ä caricato Turbo
+     Debugger o TDINST, si potrebbe provare ad usare l'opzione
+     Display Swap che puï essere specificata sia in TDINST, sia
+     sulla riga di comando con l'opzione -ds. Si consulti il
+     manuale del mouse per utilizzare correttamente il mouse e i
+     suoi driver. Le versioni pió recenti del mouse dispongono di
+     una modalitÖ video non pió larga di 80 colonne per 24 righe.
+     Puï risultare cosç che il driver del mouse non funzioni
+     correttamenta quando si usano le modalitÖ di visualizzazione
+     pió capaci di Turbo Debugger EGA 80x43, VGA 80x50, o EGA/VGA
+     in modalitÖ grafica.
+
+Barre di scorrimento
+     Le barre di scorrimento, posizionate sulla destra e sulla
+     parte inferiore di tutte le finestre, consentono di
+     specificare una nuova posizione all'interno di una finestra
+     facendo clic con il mouse su un indicatore della barra di
+     scorrimento e trascinandolo in una nuova posizione. Le
+     frecce collocate ad entrambe le estremitÖ di una barra di
+     scorrimento consentono inoltre di scorrere all'interno della
+     finestra quando si fa clic con il mouse e si tiene il mouse
+     sui triangoli.
+
+Icone
+     Un'icona ä una finestra che ä stata ridotta ad una
+     rappresentazione pió piccola. Queste icone possono essere
+     spostate utilizzando il mouse, facendo clic sul bordo
+     dell'icona e trascindola in una nuova posizione. Le frecce
+     collocate in alto a destra di ogni finestra consentono di
+     ingrandire e di riportare alle dimensioni originali la
+     finestra. Quando si riduce una finestra ad icona, essa viene
+     memorizzata nell'angolo in basso a destra. Se vi sono altre
+     finestre visualizzate in questa posizione l'icona verrÖ
+     inserita dietro quella finestra. Il menu globale delle
+     finestre (Window) consente di scegliere una finestra
+     particolare da una lista di finestre correntemente aperte.
+     Anche questo porterÖ ad una finestra ridotta ad icona.
+
+Casella di ridimensionamento
+     La casella di ridimensionamento si trova nella parte in
+     basso a destra di ogni finestra. Si puï far clic con il
+     mouse sulla casella e trascinare il mouse per ridimensionare
+     la finestra. Si puï anche ridimensionare la finestra facendo
+     clic con il mouse sul bordo destro di qualsiasi finestra e
+     trascinarlo. Le finestre e gli ispettori possono essere
+     spostati facendo clic con il mouse nei bordi in alto e a
+     sinistra e trascinando la finestra in una nuova posizione.
+     Facendo un doppio clic con il mouse sul bordo in alto ä
+     possibile ingrandire o riportare alle dimensioni originali
+     la finestra corrente pió velocemente.
+
+Le finestre di dialogo
+     Le finestre di dialogo consentono di selezionare le opzioni,
+     di specificare i file da memorizzare o da ripristinare, e di
+     selezionare le diverse impostazioni. Inoltre consentono di
+     far clic con il mouse per rendere attivi i messaggi di
+     richiesta o i riquadri all'interno della finestra di
+     dialogo. L'aiuto della finestra di dialogo corrente ä a
+     disposizione facendo clic sul pulsante Help della finestra.
+
+Pulsante di chiusura
+     Un pulsante di chiusura (Close) ä posizionato nella parte in
+     alto a sinistra di tutte le finestre e delle finestre di
+     dialogo. Esso consente di chiudere la finestra corrente o la
+     finestra di dialogo quando si fa clic con il mouse su di
+     esso. Se si sono introdotte delle informazionni in una
+     finestra di dialogo e si ä usato il pulsante Cancel per
+     chiuderla, le impostazioni specificate nella finestra di
+     dialogo non saranno memorizzate. Questo ä lo stesso che far
+     clic con il mouse sul pulsante Close in una finestra di
+     dialogo. Si dovrÖ selezionare il pulsante OK delle finestre
+     di dialogo per memorizzare queste impostazioni.
+
+=Fine Aiuto!= 
+

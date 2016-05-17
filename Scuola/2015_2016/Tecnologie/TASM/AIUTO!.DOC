@@ -1,0 +1,263 @@
+
+TURBO ASSEMBLER 2.0: RISPOSTE A DOMANDE COMUNI
+-----------------------------------------------
+
+  Ecco dei consigli, dei trucchi e dei suggerimenti che possono
+  risultare utili quando si usa Turbo Assembler.
+
+
+ D. Come si installa Turbo Assembler?
+ R. Si esegue il programma INSTALL dal disco TURBO ASSEMBLER/
+    INSTALLATION. Per iniziare l'installazione, si cambia l'unitÖ
+    corrente in quella che contiene il programma di installazione
+    e si digita INSTALL. In una casella nella parte inferiore
+    dello schermo verranno date delle istruzioni per ogni
+    messaggio di richiesta. Ad esempio, se si sta installando
+    dall'unitÖ A:, si digita
+
+      A:
+      INSTALL
+
+    A questo punto apparirÖ il programma INSTALL con le opzioni
+    e le descrizioni di menu che aiuteranno nell'installazione.
+
+ D. Quando si devono usare le diverse modalitÖ di assemblaggio
+    TASM fornisce per i programmi in assembly esistenti?
+ R. ModalitÖ               Condizioni per l'uso
+    --------------------------------------------------------------
+    Normal(MASM)         - Programma che assembla sotto MASM 4.00
+                           o MASM 5.00.
+    Quirks               - Programma che assembla sotto MASM 4.00
+                           o MASM 5.00, ma che non assemblerÖ
+                           sotto TASM senza MASM51 o QUIRKS.
+    Masm51               - Programma che richiede MASM 5.1 di
+                           assemblaggio.
+    Masm51 and Quirks    - Programma che richiede MASM 5.1 di
+                           assemblaggio, ma che non assemblerÖ sotto
+                           TASM con solo l'insieme di opzioni di
+                           MASM51.
+
+ D. Si deve usare MASM51 per assemblare i file scritti per MASM
+    5.1?
+ R. La maggior parte di file assemblerÖ anche senza usare la
+    direttiva MASM51. Tuttavia, se il codice assembly utilizza
+    solo le caratteristiche trovate in MASM 5.1, occorrerÖ usare
+    la modalitÖ MASM51. Si controlli la tabella seguente di Q&A
+    per vedere quali caratteristiche dell'emulazione di MASM51
+    sono attivate dalle combinazioni di MASM51 e QUIRKS.
+
+ D. Quali voci sono controllate +dalle modalitÖ QUIRKS e MASM51?
+ R. La tabella seguente elenca cosa fanno le varie combinazioni
+    di QUIRKS e MASM51:
+
+    ModalitÖ               Operazioni
+    -----------------------------------------------------------------
+    Quirks               - Consente ai salti di tipo FAR di essere
+                           generati sotto forma di NEAR o SHORT se
+                           in accordo con CS.
+                         - Consente a tutti i formati delle
+                           istruzioni di essere determinati in
+                           un'operazione binaria esclusivamente da
+                           un registro, se questo ä presente.
+                         - Distrugge OFFSET, la forzatura del
+                           segmento (ecc.) le informazioni su
+                           '=' o le equivalenze numeriche 'EQU'.
+                         - Forza le equivalenze numeriche 'EQU'
+                           in espressioni contenenti "PTR" o ":" in
+                           formato testo.
+
+    Masm51               - Abilita Instr, Catstr, Substr, Sizestr, e
+                           "\" di continuazione di riga di comando.
+                         - Fa delle equivalenze EQU delle parole
+                           riservate TEXT invece delle ALIAS.
+                         - Non elimina lo spazio vuoto che precede
+                           %textmacro nei parametri delle macro.
+
+    Masm51  e  Quirks    - Tutto quanto viene elencato sotto QUIRKS.
+                         - Tutto quanto viene elencato sotto MASM51.
+                         - Abilita le etichette locali @@, @F, e @B.
+                         - Rende PUBLIC i nomi delle procedure nei
+                           modelli di tipo esteso.
+                         - Rende ridefinibili le etichette NEAR delle
+                           PROC anche in altre PROC.
+                         - Consente all'operatore "::" di definire
+                           i simboli che possono essere raggiunti al
+                           di fuori della procedura corrente.
+
+    Masm51 and Ideal     - Sono richieste la sintassi della modalitÖ
+                           Ideal e le direttive del testo Masm51, per
+                           esempio, Instr, Catstr, Substr, e Sizestr.
+
+  D. Quando si devono usare le direttive DOSSEG o .STACK?
+  R. Quando si stanno sviluppando i moduli di Turbo Assembler
+     da collegare con linguaggi di alto livello come Turbo C++
+     e Turbo Pascal, non occorrono le direttive DOSSEG o .STACK
+     poichÇ questi compilatori gestiscono la predisposizione dello
+     stack e l'ordinamento di segmenti. Queste direttive definiscono
+     i nomi di segmenti e l'ordine che potrebbero contrastare con
+     quelli usati dal linguaggio di alto livello. Occorre solo,
+     tuttavia, definire queste direttive una volta in qualsiasi modulo
+     di un programma con assemblatore autonomo. La direttiva DOSSEG occorre
+     solo se si vuole che i segmenti vengano ordinati usando le
+     convenzioni della Microsoft. Si puï definire l'ordinamento di
+     segmenti assicurandosi che i segmenti vengano incontrati da TLINK
+     nell'ordine desiderato. Si rimanda alla sezione TLINK del manuale
+     per una completa descrizione di come questo funzioni.
+
+  D. Quali opzioni si devono usare quando si utilizza Turbo
+     Assembler per assemblare i file che accompagnano il
+     compilatore del C della Microsoft?
+  R. Quando si assemblano i moduli del linguaggio assembly forniti
+     insieme ai compilatori della Microsoft, occorre accertarsi di
+     usare le modalitÖ MASM51 e QUIRKS. Ad esempio,
+
+       tasm /jmasm51 /jquirks nomefile
+
+  D. Come si crea un file .COM?
+  R. Il sorgente assembly dovrebbe essere assemblato nel modello
+     tiny (.MODEL TINY) e dovrebbe comprendere un ORG 100h che
+     segue l'apertura del segmento di codice, come visto di
+     seguito:
+
+                .MODEL  TINY
+                .CODE
+                ORG     100h
+        start:
+                ....          ; corpo del programma
+        END     start         ; definisce il punto di ingresso
+
+     Non comprende una direttiva .STACK in un programma progettato
+     per essere un file .COM.
+
+     Se viene specificata l'opzione /t, TLINK creerÖ un file .COM
+     invece di un file .EXE. Ad esempio,
+
+        tlink /t SHOW87
+
+     creerÖ SHOW87.COM invece di SHOW87.EXE.
+
+     Esistono alcuni limiti nella conversione di un file .EXE in
+     un file .COM. Questi limiti sono documentati nel manuale
+     IBM Disk Operating System sotto EXE2BIN.
+
+  D. Come si assemblano i file multipli con Turbo Assembler?
+  R. Turbo Assembler assemblerÖ i file multipli usando i
+     metacaratteri o separandoli tramite il segno pió (+).
+     Ad esempio, la riga di comando seguente
+
+       tasm filt + o*
+
+     assembla il file FILT.ASM, ed anche tutti i file .ASM
+     che iniziano con la lettera 'o'.
+
+  D. Come si assemblano i file multipli se non usano tutti le
+     stesse opzioni della riga di comando?
+  R. Turbo Assembler usa il punto e virgola (;) come separatore
+     della riga di comando in modo che si possano effettivamente
+     avere delle righe di comando multiple su una singola riga di
+     comando del DOS. Ad esempio, la riga di comando seguente
+
+       tasm /zi filt; o*
+
+     assembla il file FILT.ASM con le informazioni di debugging
+     attivate, quindi assembla tutti i file .ASM che iniziano con
+     la lettera 'o' senza le informazioni di debugging.
+
+  D. Il Macro Assembler della Microsoft consente di definire le
+     variabili dell'ambiente cosç non occorre immetterle su ogni
+     riga di comando. Si puï fare questo anche con Turbo
+     Assembler?
+  R. No, ma Turbo Assembler fornisce un modo ancora pió flessibile
+     per evitare la digitazione delle opzioni della riga di
+     comando ogni volta. Ogni volta che viene eseguito Turbo Assembler,
+     esso ricerca nella directory corrente, quindi nella directory
+     dalla quale ä stato avviato (versione 3.x del DOS e successive)
+     un file speciale chiamato TASM.CFG. Questo file puï contenere
+     tutto quello che contiene la riga di comando. Prima viene
+     elaborato questo file e quindi la riga di comando in modo che
+     le opzioni della riga di comando abbiano la prioritÖ su
+     quelle trovate nel file di configurazione TASM.CFG. Se, per
+     esempio, le opzioni della riga di comando sono sempre
+
+       /t /ml /zi /jJUMPS /jLOCALS
+
+     si puï creare il file TASM.CFG che contiene queste righe
+
+       /t
+       /ml
+       /zi
+       /jJUMPS
+       /jLOCALS
+
+     Ora, ogni volta che si esegue Turbo Assembler, quelle saranno
+     le opzioni standard. Questo significa che, se si vuole, si
+     possono avere dei file TASM.CFG distinti per ogni progetto.
+     Se si hanno dei progetti multipli che risiedono in una
+     singola sottodirectory, allora si puï creare un file di
+     configurazione distinto per ogni progetto ed usarli come file di
+     comando indiretti di Turbo Assembler.
+
+  D. Cosa sono i file di comando indiretti di Turbo Assembler?
+  R. Questi sono file che contengono righe di comando di Turbo
+     Assembler parziali o complete e che sono preceduti da un
+     simbolo @ sulla riga di comando. Ad esempio, se si dispone
+     di un file chiamato "FILE.CMD" che contiene quanto segue,
+
+       /t
+       /ml
+       /zi
+       /jJUMPS
+       /jLOCALS
+       file1 +
+       file2 +
+       file3 +
+       file4
+
+     allora si potrÖ usare la riga di comando
+
+       tasm @FILE.CMD
+
+     invece della riga di comando
+
+       tasm /t /ml /zi /jJUMPS /jLOCALS file1+file2+file3+file4
+
+     Si noti che il simbolo @ non fa effettivamente parte del
+     nome del file. Infatti, se si dÖ il nome ad un file con il
+     simbolo @ all'inizio, Turbo Assembler lo tratterÖ come un
+     file di comando indiretto.
+
+  D. Si stanno collegando le funzioni in linguaggio assembly con
+     Turbo C. PerchÇ il linker riporta che tutte le funzioni sono
+     indeterminate?
+  R. Occorre accertarsi di aver messo una sottolineatura (_) davanti
+     a tutti i nomi di funzioni in liguaggio assembly che devono
+     essere chiamati da Turbo C. Se si usa la segmentazione
+     semplificata e si include lo specificatore del linguaggio C
+     sulla direttiva .MODEL, Turbo Assembler accoderÖ prima
+     automaticamente la sottolineatura. Il programma in linguaggio
+     assembly dovrebbe essere assemblato con la direttiva di
+     distinzione tra maiuscole e minuscole (/ML o /MX). Si veda
+     il Capitolo 7, "L'interfacciamento di Turbo Assembler con Turbo C"
+     in Turbo Assembler: guida all'uso per i dettagli.
+
+  D. Si puï usare il backslash (\) invece dello slash (/) come
+     specificatore di opzioni?
+  R. NO! Turbo Assembler (e MASM) lo considererÖ come un file
+     che risiede nella directory radice dell'unitÖ predefinita.
+     PoichÇ entrambi gli assemblatori considerano il carattere di
+     spazio ( ) come una virgola (,) questo potrebbe provocare
+     la perdita di file. Se accidentalmente si fornisce questa
+     riga di comando,
+
+      tasm \zi prid&joy.asm
+
+     Turbo Assembler (e MASM) tratterÖ questa riga di comando come
+     le istruzioni di assemblaggio di un file chiamato ZI.ASM che
+     puï essere trovato nella directory radice e creare un file di
+     output nella directory corrente chiamato PRID&JOY.ASM. (Si
+     puï notare che gli assemblatori pensano che l'estensione standard
+     dei file oggetto, .OBJ, sia stata esplicitamente forzata in
+     .ASM.) Il file PRID&JOY.ASM verrÖ o forzato con il file
+     oggetto o cancellato se il file \ZI.ASM non viene trovato e
+     assemblato correttamente. In altri casi, il contenuto
+     originale di PRID&JOY.ASM viene perduto.

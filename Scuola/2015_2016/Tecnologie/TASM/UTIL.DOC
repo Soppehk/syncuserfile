@@ -1,0 +1,1232 @@
+
+PROGRAMMI DI SERVIZIO DI TURBO ASSEMBLER
+=========================================
+
+Turbo Assembler ä dotato di sei potenti programmi di servizio
+autonomi. Questi programmi di servizio autonomi si possono usare
+con i file di Turbo Assembler e con gli altri moduli. MAKE, TLINK,
+e TLIB sono documentati in Turbo Assembler: manuale di riferimento;
+alcune informazioni addizionali su TLINK sono incluse all'inizio
+di questo file. 
+
+GREP (un programma di servizio per la ricerca di file), OBJXREF (un
+generatore di cross-reference di moduli oggetto), e TCREF (un generatore
+di cross-reference) sono documentati
+di seguito.
+
+
+TLINK: Turbo Link
+------------------
+
+Quando viene richiesta una mappa dettagliata attraverso l'uso
+dell'opzione /s, la lista dei simboli PUBLIC (se compare) ha dei
+simboli PUBLIC identificati con "idle" se non vi sono riferimenti
+a quel simbolo. Ad esempio, questo frammento dalla sezione di
+simbolo PUBLIC di un file .MAP indica che i simboli Symbol1 e
+Symbol3 non vengono consultati dall'immagine che ä stata
+collegata:
+
+  0C7F:031E    idle    Symbol1
+  0000:3EA2            Symbol2
+  0C7F:0320    idle    Symbol3
+
+
+opzione /o (overlay)
+
+L'opzione /o fa sç che il codice in tutti i moduli o librerie
+venga specificato dopo l'opzione che deve essere gestita in
+overlay. Resta in vigore fino alla virgola successiva
+(esplicita o implicita) o all'/o- nello stream di comando. /o-
+disattiva la gestione in overlay.
+
+L'opzione /o puï essere opzionalmente seguita da un nome di classe
+di segmenti; questo farÖ sç che tutti segmenti di classi vengano
+gestiti in overlay. Quando non viene specificato alcun nome come
+questo, tutti i segmenti di classi che terminano con CODE verranno
+gestiti in overlay. Possono essere fornite le opzioni /o multiple,
+e cosç anche la gestione in overlay di segmenti di diverse classi;
+tutte le opzioni /o restano in effetti fino a quando non si
+incontra la virgola successiva o /o-.
+
+La sintassi /o#xx, dove xx ä un numero esadecimale a due cifre,
+forza il numero di interrupt degli overlay, che di norma ä 3FH.
+
+Ecco alcuni esempi delle opzioni /o:
+
+  /o             Gestisce in overlay tutti i segmenti di codice
+                 fino alla virgola successiva o /o- successivo.
+
+  /o-            Arresta la gestione in overlay.
+
+  /oOVY          Gestisce in overlay i segmenti di classe OVY fino
+                 alla virgola successiva o /o- successivo.
+
+  /oCODE /oOVLY  Gestisce in overlay i segmenti di classe CODE o di
+                 classe OVLY fino alla virgola successiva o /o-
+                 successivo.
+		 
+  /o#F0          Usa il vettore di interrupt 0F0H degli overlay.
+
+Si puï usare l'opzione /o nei file di risposta. Se si usa
+l'opzione /o in un file di risposta, questa verrÖ disattivata
+automaticamente prima che le librerie vengano elaborate. Se si
+vuole sovrapporre una libreria, si deve usare un'altra /o prima
+di tutte le librerie o prima delle librerie che si vogliono
+sovrapporre.
+
+
+/y (memoria espansa o estesa)
+
+Questa opzione controlla l'uso della memoria espansa o estesa di
+TLINK per la gestione in buffer di input/output. Se, mentre si
+leggono i file oggetto o mentre si scrive il file eseguibile, TLINK
+necessita di pió memoria per le strutture di dati attive, svuoterÖ
+i buffer o li trasferirÖ alla memoria espansa o estesa.
+
+Nel caso di gestione in buffer di file di input, svuotare significa
+semplicemente non considerare il buffer di input in modo che il
+suo spazio possa essere usato per altre strutture di dati. Nel
+caso di gestione in buffer di file di output, svuotare significa scrivere
+il buffer nella sua posizione corrente nel file eseguibile.
+In entrambi i casi, ä possibile aumentare sostanzialmente la
+velocitÖ di un collegamento consentendo a questi buffer di
+essere trasferiti alla memoria espansa o estesa.
+
+La potenza di TLINK non ä aumentata per mezzo del trasferimento,
+ma ä aumentata solo la prestazione. Di norma, il trasferimento
+alla memoria espansa ä attivato, mentre quello alla memoria estesa
+ä disattivato. Se il trasferimento ä attivato e non esiste memoria
+appropriata nella quale effettuare il trasferimento, allora il
+trasferimento non ha luogo.
+
+Questa opzione ha diverse forme che sono mostrate di seguito
+
+  /ye   attiva il trasferimento standard di memoria espansa
+  /ye   disattiva il trasferimento di memoria espansa
+  /yx   attiva il trasferimento di memoria estesa
+  /yx-  disattiva il trasferimento standard di memoria estesa
+
+
+GREP: un programma di servizio per la ricerca di file
+------------------------------------------------------
+
+GREP ä un potente programma di servizio per la ricerca che puï
+cercare il testo in diversi file alla volta.
+
+La sintassi generale della riga di comando di GREP ä la seguente:
+
+  grep [opzioni] stringaricerca specfile [specfile specfile ...
+  specfile]
+
+Ad esempio, se si vuole vedere in quali file sorgente si ä
+chiamata la funzione setupmodem, si puï usare GREP per ricercare
+il contenuto di tutti i file .ASM nella directory e cercare la
+stringa setupmodem, nel modo seguente:
+
+  grep setupmodem *.asm
+
+
+Le opzioni GREP
+----------------
+
+Nella riga di comando, le opzioni sono uno o pió caratteri singoli
+preceduti da un trattino (-). Ogni carattere individuale ä
+un'opzione che si puï attivare o disattivare: si digiti il pió (+)
+dopo un carattere per attivare l'opzione, o un trattino (-) dopo il
+carattere per disattivare l'opzione.
+
+Di norma le opzioni sono abilitate (il + ä implicito): ad esempio, -r
+significa la stessa cosa di -r+. Si possono elencare le opzioni multiple
+in modo individuale (cosç: -i -d -l), o combinarle (cosç: -ild o -il
+-d e cosç via); per GREP ä indifferente.
+
+Ecco una lista dei caratteri delle opzioni usati con GREP ed il loro
+significato:
+
+  -c  Solo conteggio: stampa solo un conteggio di righe corrispondenti.
+      Per ogni file che contiene almeno una riga corrispondente, GREP
+      stampa il nome del file e un conteggio del numero di righe
+      corrispondenti. Le righe corrispondenti non vengono stampate.
+
+  -d  Directory: per ogni specfile specificata sulla riga di
+      comando, GREP ricerca tutti i file che corrispondono alla
+      specifica di file, sia nella directory specificata, sia in
+      tutte le sottodirectory sotto la directory specificata. Se
+      si fornisce una specfile senza un percorso, GREP suppone che
+      i file si trovino nella directory corrente.
+
+  -i  Direttiva che non distingue le maiuscole dalle minuscole: GREP
+      ignora le differenze tra maiuscole e minuscole. GREP tratta tutte
+      le lettere a-z come le corrispondenti lettere A-Z in tutte le
+      situazioni.
+
+  -l  Lista dei file corrispondenti: stampa solo il nome di ogni file che
+      contiene una corrispondenza. Quando trova una corrispondeza, GREP
+      stampa il nome del file si sposta immediatamente al file successivo.
+
+  -n  Numeri: ogni riga corrispondente stampata da GREP ä
+      preceduta dal suo numero di riga.
+
+  -o  Formato di output di UNIX: cambia il formato dell'output delle
+      righe corrispondenti per avvalersi dello stile pió semplice di
+      UNIX della riga di comando punteggiata. Tutte le righe di
+      output sono precedute dal nome del file che conteneva la
+      riga corrispondente.
+
+  -r  Ricerca di espressioni regolari: il testo definito dalla
+      stringaricerca viene trattato come un'espressione regolare
+      invece che come una stringa letterale.
+
+  -u  Opzioni di aggiornamento: GREP combinerÖ le opzioni fornite
+      sulla riga di comando con le sue opzioni standard e le
+      scriverÖ nel file GREP.COM come nuovi parametri normali. (In altre
+      parole, GREP si autoconfigura). Questa opzione consente di
+      adattare le impostazioni delle opzioni standard a piacere.
+
+  -v  Non corrispondente: stampa solo le righe non corrispondenti. Solo
+      le righe che non contengono la stringa di ricerca vengono considerate
+      righe non corrispondenti.
+
+  -w  Ricerca parola: il testo trovato che corrisponde all'espressione
+      regolare viene considerato un corrispondente solo se il carattere
+      che lo precede e lo segue non fa parte di una parola. L'insieme
+      di caratteri di parole standard comprende A-Z, 9-0, e la sottolineatura
+      (_). Una forma alternativa di questa opzione consente di specificare
+      l'insieme di caratteri della parola legale. La sua forma ä -w[insieme],
+      dove insieme ä qualsiasi definizione di insieme dell'espressione
+      regolare valida. Se si definisce l'insieme con caratteri alfabetici,
+      si assume che questo contenga sia i valori maiuscoli che quelli
+      minuscoli a prescindere da come viene digitato e a prescindere dal
+      fatto che la ricerca distingue tra maiuscole e minuscole. Se si
+      imposta l'opzione -w in combinazione con l'opzione -u, viene
+      memorizzato il nuovo insieme di caratteri legali come insieme
+      standard.
+
+  -z  Prolisso: GREP stampa il nome di file di ogni file ricercato. Ogni
+      riga corrispondente ä preceduta dal suo numero di riga. Viene fornito
+      un conteggio di righe corrispondenti in ogni file, anche se il
+      conteggio ä zero.
+
+
+Ordine di precedenza
+---------------------
+
+Si ricordi che ogni opzione di GREP ä una scelta binaria: il suo stato
+riflette il modo in cui si ä impostata l'ultima volta. In qualsiasi
+momento ogni opzione puï solo essere attivata o disattivata. Ogni
+occorrenza di una data opzione sulla riga di comando prevale sulla
+sua precedente definizione. Per esempio,
+
+  grep -r -i- -d -i -r-  main( my*.asm
+
+Data questa riga di comando, GREP esegue con l'opzione -d e l'opzione -i
+attivate, e con l'opzione -r disattivata.
+
+Si puï installare l'impostazione standard preferita per ogni
+opzione in GREP.COM con l'opzione -u. Per esempio, se si vuole
+che GREP faccia sempre una ricerca prolissa (-z attivata), ä
+possibile installarlo con il comando seguente:
+
+  grep -u -z
+
+
+La stringa di ricerca
+----------------------
+
+Il valore di stringaricerca definisce il modello che GREP ricerca.
+Una stringa di ricerca puï essere sia un'espressione regolare, sia
+una stringa letterale. In un'espressione regolare, alcuni caratteri
+hanno un significato speciale: essi sono operatori che governano la
+ricerca. In una stringa letterale, non vi sono operatori; ogni
+carattere viene trattato in modo letterale.
+
+Si puï racchiudere la stringa di ricerca tra apici per far sç che gli
+spazi e le tabulazioni non vengano trattati come delimitatori. Il testo
+corrisposto dalla stringa di ricerca non puï attraversare i limiti delle
+righe, vale a dire tutto il testo necessario per corrispondere al modello
+deve essere su una singola.
+
+Un'espressione ä sia un singolo carattere, sia un'insieme di caratteri
+racchiusa tra parentesi quadre. Una concatenazione di espressioni regolari
+ä un'espressione regolare.
+
+
+Operatori in espressioni regolari
+----------------------------------
+
+Quando si usa l'opzione -r , la stringa di ricerca viene trattata
+come un'espressione regolare (non come un'espressione letterale)
+e i seguenti caratteri assumono un significato speciale:
+
+  ^    Un accento circonflesso all'inizio dell'espressione
+       corrisponde all'inizio di una riga.
+
+  $    Un simbolo di dollaro alla fine dell'espressione
+       corrisponde alla fine di una riga.
+
+  .    Un punto corrisponde a qualsiasi carattere.
+
+  *    Un'espressione seguita da un metacarattere
+       asterisco corrisponde a zero o pió occorrenze di
+       quell'espressione. Ad esempio, in fo*, * opera
+       sull'espressione o; corrisponde a f, fo, foo, ecc.
+       (f seguita da zero o pió o), ma non corrisponde a
+       fa.
+
+  +    Un'espressione seguita da un pió corrisponde a una
+       o pió occorrenze di quell'espressione: fo+
+       corrisponde a fo, foo, ecc., ma non a f.
+
+  [ ]  Una stringa racchiusa tra parentesi quadre
+       corrisponde a qualsiasi carattere in quella
+       stringa, ma non ad altri. Se il primo carattere
+       della stringa ä un accento circonflesso (^),
+       l'espressione corrisponde a qualsiasi carattere
+       esclusi i caratteri della stringa. Ad esempio, [xyz]
+       corrisponde a x, y, o z, mentre [^xyz] corrisponde
+       ad a e b, ma non a x, y, o z. Si puï specificare un
+       insieme di caratteri con due caratteri separati da un
+       trattino (-). Questi possono essere combinati alle
+       espressioni di forma (come [a-bd-z?], che corrisponde
+       al carattere ? e a qualsiasi lettera minuscola eccetto c).
+
+  \    Il carattere escape backslash indica a GREP di
+       ricercare il carattere letterale che lo segue. Ad
+       esempio, \. corrisponde ad un punto invece che a
+       "qualsiasi carattere".
+
+Nota: Quattro dei caratteri "speciali" ($, ., *, e +) non hanno
+un significato speciale quando vengono usati all'interno di un
+insieme tra parentesi quadre. Inoltre, il carattere ^ viene trattato
+in modo speciale solo se segue immediatamente l'inizio della definizione
+dell'insieme (subito dopo il delimitatore [).
+
+Qualsiasi carattere ordinario non menzionato nella
+precedente lista corrisponde a quel carattere.
+(> corrisponde a >, # corrisponde a # e cosç via).
+
+
+La specifica di file
+----------------------
+
+La terza voce nella riga di comando di GREP ä specfile, la
+specifica di file; questa indica a GREP quali file (o gruppi di
+file) ricercare. specfile puï essere un nome di file esplicito, o
+un nome di file generico che incorpora i metacaratteri del DOS ? e
+*. Inoltre, si puï immettere un percorso (informazioni relative
+all'unitÖ e alla directory) come parte di specfile. Se si indica
+specfile senza un percorso, GREP ricerca solo la directory corrente.
+
+
+Esempi con note
+----------------
+
+I seguenti esmpi suppongono che tutte le opzioni standard di GREP
+siano disattivate:
+
+
+Esempio 1
+-----------
+
+Riga di comando:                   grep start: *.asm
+
+Corrisponde a:                     start:
+                                   restart:
+
+Non corrisponde a:                 restarted:
+                                   ClockStart:
+
+File in cui avviene la ricerca:    *.ASM nella directory corrente.
+
+Nota: Di norma, la ricerca distingue le maiuscole dalle minuscole.
+
+
+Esempio 2
+----------
+
+Riga di comando:                   grep -r [^a-z]main\ *( *.asm
+
+Corrisponde a:                      main(i:integer)
+                                    main(i,j:integer)
+                                    if (main  ()) halt;
+
+Non corrisponde a:                  mymain()
+                                    MAIN(i:integer);
+
+File in cui avviene la ricerca:     *.ASM nella directory corrente.
+
+Nota: GREP ricerca la parola main senza lettere minuscole
+precedenti ([^a-z]), seguita da zero o pió occorrenze di spazi
+vuoti (\ *), quindi una parentesi tonda (().
+
+PoichÇ gli spazi e le tabulazioni normalmente vengono considerati
+delimitatori della riga di comando, occorre delimitarli se si vuole
+includerli come parte di un'espressione regolare. In questo caso,
+lo spazio dopo main viene delimitato con il carattere escape backslash.
+Questo si puï anche realizzare mettendo lo spazio tra doppi apici
+
+   [^a-z]main" "*
+
+
+Esempio 3
+-----------
+
+Riga di comando:                    grep -ri [a-c]:\\data\.fil *.asm *.inc
+
+Corrisponde a:                      A:\data.fil
+                                    c:\Data.Fil
+                                    B:\DATA.FIL
+
+Non corrisponde a:                  d:\data.fil
+                                    a:data.fil
+
+File in cui avviene la ricerca:     *.ASM and *.INC nella directory corrente.
+
+Nota: PoichÇ il backslash e il punto (\ e .) di solito assumono un
+significato speciale, se li si vuole ricercare, occorre delimitarli
+mettendo il carattere escape backslash immediatamente davanti a
+loro.
+
+
+Esempio 4
+----------
+
+Riga di comando:                    grep -ri [^a-z]word[^a-z] *.doc
+
+Corrisponde a:                      every new word must be on a new line.
+                                    MY WORD!
+                                    word--smallest unit of speech.
+                                    In the beginning there was the WORD, and
+                                    the WORD
+
+Non corrisponde a:                  Each file has at least 2000 words.
+                                    He misspells toward as toword.
+
+File in cui avviene la ricerca:     *.DOC nella directory corrente.
+
+Nota: Questo formato fondamentalmente definisce come ricercare una
+data parola.
+
+
+Esempio 5
+----------
+
+Riga di comando:                   grep -iw word *.doc
+
+Corrisponde a:                     every new word must be on a new line However,
+                                   MY WORD!
+                                   word: smallest unit of speech that conveys
+                                   meaning.
+                                   In the beginning there was the WORD, and
+                                   the WORD
+
+Non corrisponde a:                  each document contains at least 2000 words!
+                                    He seems to continually misspell "toward"
+                                    as "toword."
+
+File in cui avviene la ricerca:     *.doc nella directory corrente.
+
+Nota: Questo formato definisce una ricerca di "word" di base.
+
+
+Esempio 6
+----------
+
+Riga di comando:                    grep "search string with spaces" *.doc *.asm
+                                    a:\work\miofile.*
+
+Corrisponde a:                      This is a search string with spaces in it.
+
+Non corrisponde a:                  THIS IS A SEARCH STRING WITH SPACES IN IT.
+                                    This is a search string with many spaces
+                                    in it.
+
+File in cui avviene la ricerca:     *.DOC e *.ASM nella directory corrente, e
+                                    MIOFILE.* in una directory chiamata \WORK
+                                    sull'unitÖ A:.
+
+Nota: Questo ä un esempio di come ricercare una stringa con spazi
+incorporati.
+
+
+Esempio 7
+----------
+Riga di comando:                     grep -rd "[ ,.:?'\"]"$ \*.doc
+
+Corrisponde a:                       He said hi to me.
+                                     Where are you going?
+                                     Happening in anticipation of a unique
+                                     situation,
+                                     Examples include the following:
+                                     "Many men smoke, but fu man chu."
+
+Non corrisponde a:                   He said "Hi" to me
+                                     Where are you going? I'm headed to the
+                                     beach this
+
+File in cui avviene la ricercaa:     *.DOC nella directory radice e tutte le
+                                     sue sottodirectory sull'unitÖ corrente.
+
+Nota: Questo esempio ricerca i caratteri ,.:?' e " alla fine di
+una riga. Si noti che il doppio apice all'interno del gruppo ä
+preceduto da un carattere escape cosç viene trattato come un
+carattere normale invece che come il doppio apice finale della
+stringa. Inoltre, si noti come il carattere $ appaia al di fuori
+della stringa indicata. Questo dimostra come le espressioni regolari
+possono essere concatenate per formare un'espressione pió lunga.
+
+
+Esempio 8
+----------
+
+Riga di comando:                    grep -ild " the " \*.doc
+                                    oppure grep -i -l -d " the " \*.doc
+                                    oppure grep -il -d " the " \*.doc
+
+Corrisponde a:                      Anyway, this is the time we have
+                                    do you think? The main reason we are
+
+Non corrisponde a:                  He said "Hi" to me just when I
+                                    Where are you going? I'll bet you're
+                                    headed to
+
+File in cui avviene la ricerca:     *.DOC nella directory radice e in tutte
+                                    le sue sottodirectory sull'unitÖ corrente.
+
+Nota: Questo esempio non tiene conto della direttiva di
+distinzione tra maiuscole e minuscole e stampa solo i nomi dei
+file che contengono almeno una corrispondenza. I tre esempi
+mostrano i diversi modi per specificare le opzioni multiple.
+
+
+
+OBJXREF: Il generatore di cross-reference dei moduli oggetto
+
+OBJXREF ä un programma di servizio che esamina una lista di file
+oggetto e di file di libreria e genera rapporti sul loro
+contenuto. Un tipo di rapporto elenca le definizioni di nomi
+public e riferimenti esterni ad essi. L'altro tipo elenca le
+dimensioni del segmento definito dai moduli oggetto.
+
+Esistono due categorie di nomi public: nomi di variabili globali
+e nomi di funzioni. I file TEST1.ASM e TEST2.ASM nella sezione
+"Rapporti di esempio di OBJXREF" illustrano le definizioni di nomi
+public e di riferimenti esterni ad essi.
+
+I moduli oggetto sono file oggetto (.OBJ) prodotti da TC, TCC o
+TASM. Un file di libreria (.LIB) contiene moduli oggetto multipli.
+Ad un modulo oggetto generato da TASM viene fornito lo stesso nome
+del file sorgente .ASM da cui ä stato compilato, a meno che un
+nome di file di output diverso venga specificatamente indicato
+sulla riga di comando.
+
+
+La riga di comando di OBJXREF
+------------------------------
+
+La riga di comando di OBJXREF si compone della parola OBJXREF
+seguita da una serie di opzioni della riga di comando e di una
+lista di nomi di file oggetto e di libreria, separati da uno
+spazio o da un carattere di tabulazione. La sintassi ä la
+seguente:
+
+  OBJXREF  <opzioni>   nomefile  <nomefile ... >
+
+Le opzioni della riga di comando determinano il tipo di rapporti
+che OBJXREF genererÖ e la quantitÖ di dettagli che OBJXREF
+fornirÖ. Questi verranno trattati pió dettagliatamente nella
+sezione seguente "Opzioni della riga di comando".
+
+Ogni opzione incomincia con uno slash (/) seguito da un nome di
+opzione di uno o due caratteri.
+
+I file oggetto e quelli di libreria possono essere specificati
+sia sulla riga di comando, sia nel file di risposta. Sulla riga
+di comando, i nomi dei file sono separati da uno spazio o da una
+tabulazione. Tutti i moduli oggetto specificati come file .OBJ
+vengono inclusi nei rapporti. Come TLINK, tuttavia, OBJXREF
+comprende solo i moduli che provengono da file.LIB che contengono
+un nome public a cui si fa riferimento in un file .OBJ o in un modulo
+precedentemente incluso da un file .LIB.
+
+Come regola generale, si dovrebbero elencare tutti i file .OBJ e
+.LIB che occorrono se il programma deve collegare in modo
+corretto, comprese le librerie.
+
+I nomi di file possono comprendere un'unitÖ e il percorso della
+directory. I metacaratteri del DOS ? e * possono essere usati per
+identificare pió di un file. I nomi di file possono riferirsi a
+file oggetto .OBJ o a file di libreria .LIB. (Se non si fornisce
+l'estensione di un file, viene supposta l'estensione .OBJ.)
+
+I nomi delle opzioni e dei file possono verificarsi in qualsiasi
+ordine nella riga di comando.
+
+I rapporti di OBJXREF sono scritti nell'output standard del DOS.
+Di norma ä lo schermo. I rapporti possono essere inviati ad una
+stampante (ad esempio con >LPT1:) o ad un file (ad esempio con
+>lstfile) con il carattere di redirezione del DOS (>).
+
+Immettendo OBJXREF senza nomi di file o opzioni si genera un
+sommario delle opzioni a disposizione.
+
+
+Le opzioni della della riga di comando
+----------------------------------------
+
+Le opzioni della riga di comando di OBJXREF si dividono in due
+categorie: opzioni di controllo e opzioni di rapporto.
+
+Opzioni di controllo
+----------------------
+
+Le opzioni di controllo modificano il comportamento standard di
+OBJXREF (di norma nessuna di queste opzioni ä attivata).
+
+  /I   Non tiene conto della differenza tra maiuscole e minuscole
+       nei nomi public: si usi questa opzione se si usa TLINK
+       senza l'opzione /c (che rende significativa la differenza tra le
+       maiuscole e le minuscole).
+
+  /F   Comprende l'intera libreria: tutti i moduli nei file
+       specificati .LIB vengono inclusi anche se non contengono
+       nomi public a cui si fa riferimento in un modulo oggetto
+       elaborato da OBJXREF. Questo fornisce le informazioni
+       relative all'intero contenuto di un file di libreria.
+       (Si veda l'esempio 4 nella sezione "Esempi di OBJXREF").
+
+  /V   Output prolisso: elenca i nomi dei file letti e visualizza
+       i totali dei nomi public, dei moduli, dei segmenti e delle
+       classi.
+
+  /Z   Comprende le definizioni del segmento di lunghezza zero: i
+       moduli oggetto possono definire un segmento senza allocare
+       alcuno spazio in esso. Elencando queste definizioni del
+       segmento di lunghezza zero normalmente si rendono i
+       rapporti della dimensione del modulo pió difficili da usare
+       ma puï essere di gran valore se si stanno cercando di
+       rimuovere tutte le definizioni di un segmento.
+
+
+Opzioni di rapporto
+---------------------
+
+Le opzioni di rapporto controllano che tipo di rapporto viene
+generato, e la quantitÖ di dettagli che OBJXREF fornisce.
+
+  /RC  Rapporto sul tipo di classe: dimensioni del modulo
+       ordinate dal tipo di classe del segmento.
+
+  /RM  Rapporto sul modulo: nomi public ordinati dal modulo
+       di definizione.
+
+  /RP  Rapporto sui nomi public: nomi public in ordine con
+       il nome del modulo di definizione.
+
+  /RR  Rapporto sui riferimenti: definizioni di nomi public e
+       riferimenti ordinati dal nome. (Questo ä il rapporto
+       standard se nessuna opzione di rapporto viene specificata).
+
+  /RS  Rapporto sulle dimensioni di moduli: dimensioni del
+       modulo ordinate dal nome del segmento.
+
+  /RU  Rapporto sui nomi dei simboli ai quali non c'ä alcun
+       riferimento: nomi public ai quali non c'ä alcun riferimento
+       ordinati dal modulo in cui vengono definiti.
+
+  /RV  Rapporto prolisso: OBJXREF genera un rapporto di
+       ogni genere.
+
+  /RX  Rapporto sui riferimenti esterni: riferimenti esterni
+       ordinati dal nome del modulo a cui si riferisce.
+
+
+File di risposta
+-----------------
+
+La riga di comando ä ridotta dal DOS ad un massimo di 128
+caratteri. Se la lista delle opzioni e i nomi dei file
+supereranno questo limite, si devono mettere i nomi dei file
+in un file di risposta.
+
+Un file di risposta ä un file di testo che si crea con un editor
+di testo. PoichÇ si potrebbe giÖ aver preparato una lista di file
+che costituiscono il programma per altri programmi di Turbo
+Assembler, OBJXREF riconosce diversi tipi di file di risposta.
+
+I file di risposta sono chiamati dalla riga di comando usando una
+delle seguenti opzioni. Il nome del file di risposta deve seguire
+l'opzione senza l'intervento di uno spazio (/Lresp e non /L resp).
+
+Si puï specificare pió di un file di risposta sulla riga di
+comando, e nomi addizionali di file .OBJ e .LIB possono precedere
+o seguirli.
+
+
+File di risposta a formato libero
+----------------------------------
+
+Si puï creare un file di risposta a formato libero con un editor di
+testo. Basta elencare i nomi di tutti i file .OBJ e .LIB che
+servono per creare il file .EXE.
+
+Per usare file a formato libero con OBJXREF, si digiti ogni nome di file
+di risposta sulla riga di comando, preceduto da @, e lo si separi
+dalle altre voci della riga di comando con uno spazio o una tabulazione:
+
+   @nomefile  @nomefile ...
+
+Nota: Qualsiasi file che viene elencato nel file di risposta senza
+un'estensione ä considerato un file .OBJ.
+
+File di risposta del linker
+----------------------------
+
+I file nel formato di file di risposta di TLINK possono anche
+essere usati da OBJXREF. Un file di risposta del linker chiamato
+dalla riga di comando ä preceduto da /L, nel modo seguente:
+
+   /Lnomefile
+
+Per vedere come usare uno di questi file, si rimanda all'Esempio 2
+nella sezione "Esempi di come usare OBJXREF".
+
+
+         L'opzione /D
+
+Se si vuole che OBJXREF cerchi i file .OBJ in una directory che
+non sia quella corrente, si includa il nome della directory sulla
+riga di comando, preceduto da /D:
+
+  C:>OBJXREF/Ddir1[;dir2[;dir3]]
+
+oppure
+
+  C:>OBJXREF/Ddir1[/Ddir2][/Ddir3]
+
+OBJXREF ricercherÖ tutti file oggetto e i file di libreria in ogni
+directory nell'ordine specificato. Se non si usa l'opzione /D, i file
+verranno ricercati solo nella directory corrente. Tuttavia, se si usa
+un'opzionea /D, i file non verranno ricercati nella directory corrente
+a meno che non siano compresi nella lista delle directory. Ad esempio, si
+ricerchino i file prima nella directory BORLAND e quindi nella directory
+corrente, si digiti
+
+  C:>OBJXREF/Dborland;
+
+Se vengono specificate diverse directory di ricerca, e viene
+trovato un file che corrisponde alla specifica di file, OBJXREF
+includerÖ il file come parte del cross-reference. OBJXREF
+continuerÖ a cercare solo nelle altre directory per la stessa
+specifica di file se la specifica di file contiene i
+metacaratteri.
+
+
+L'opzione /O
+-------------
+
+L'opzione /O consente di specificare un file di output dove
+OBJXREF invierÖ qualsiasi rapporto generato. Essa ha la seguente
+sintassi:
+
+  C:>OBJXREF miofile.obj /RU
+  /Onomefile.ext
+
+Di norma, tutto l'output viene inviato alla consolle.
+
+
+L'opzione /N
+-------------
+
+Si possono limitare i moduli, i segmenti, le classi, o i nomi
+public che OBJXREF riporta immettendo il nome appropriato sulla
+riga di comando, preceduto dall'opzione /N. Ad esempio,
+
+  OBJXREF <listafile> /RM /NTest
+
+indica a OBJXREF di generare un rapporto che elenchi solo le
+informazioni del modulo chiamato Test.
+
+
+Rapporti di esempio di OBJXREF
+-------------------------------
+
+Si supponga di avere due file sorgente nella directory Turbo
+Assembler, e di desiderare di generare dei rapporti di OBJXREF
+sui file oggetto compilati da loro. I file sorgente sono chiamati
+TEST1.ASM e TEST2.ASM, e appaiono cosç:
+
+  ; TEST1.ASM
+
+          .MODEL  small
+          STACK   200h
+          EXTRN   GOODBYE:BYTE           ;si riferisce a Goodbye
+          EXTRN   SAYHELLO:NEAR          ;si riferisce a SayHello
+
+          PUBLIC  HELLO                  ;renda Hello public
+          PUBLIC  NOTUSED                ;rende NotUsed public
+
+  .DATA
+  HELLO   DB      'Hello',10, 13, '$'    ;definisce Hello
+  NOTUSED DW      ?
+  HIDDEN  DW      ?
+
+  .CODE
+  SAYBYE  PROC    NEAR                   ;definisce SayBye
+          mov     dx,OFFSET GOODBYE
+          mov     ah,9
+          int     21h
+          ret
+  SAYBYE  ENDP
+
+  START   PROC    NEAR                   ;definisce Start
+          mov     ax,@data
+          mov     ds,ax
+          call    SAYHELLO               ;si riferisce a SayHello
+          call    SAYBYE                 ;si riferisce a SayBye
+  EXIT:
+          mov     ax,04C00h
+          int     21h
+  START   ENDP
+  END     START
+
+
+  ; TEST2.ASM
+
+          .MODEL  small
+
+          EXTRN   HELLO:BYTE             ;si riferisce a Hello
+
+          PUBLIC  GOODBYE                ;rende Goodbye public
+          PUBLIC  SAYHELLO               ;rende SayHello public 
+  .DATA
+  GOODBYE DB      'Goodbye',10, 13, '$'  ;definisce Goodbye
+
+  .CODE
+  SAYHELLO        PROC    NEAR           ;definisce SayHello
+          mov     dx,OFFSET HELLO        ;si riferisce a Hello
+          mov     ah,9
+          int     21h
+          ret
+  SAYHELLO        ENDP
+  END
+
+I moduli oggetto compilati da loro sono TEST1.OBJ e TEST2.OBJ.
+Si puï dire a OBJXREF quale tipo di rapporto generare su questi
+file .OBJ immettendo i nomi di file sulla riga di comando, seguiti
+da /R e da una seconda lettera che denota il tipo di rapporto.
+
+Nota: Gli esempi elencati di seguito mostrano solo dei frammenti dell'output.
+
+
+Rapporto sui nomi public (/RP)
+-------------------------------
+
+Un rapporto sui nomi public elenca ognuno dei nomi public definito
+nei moduli oggetto che sono riportati, seguito dal nome del modulo
+nel quale viene definito.
+
+Se si immette quanto segue sulla riga di comando,
+
+  OBJXREF  /RP  test1  test2
+
+OBJXREF genererÖ un rapporto come questo:
+
+   Symbol    Defined in
+
+   GOODBYE   TEST2
+   HELLO     TEST1
+   NOTUSED   TEST1
+   SAYHELLO  TEST2
+
+
+Rapporto sul modulo (/RM)
+--------------------------
+
+Un rapporto sul modulo elenca ogni modulo oggetto che viene
+riportato, seguito da una lista dei nomi public definiti in esso.
+
+Se si immette quanto segue sulla riga di comando,
+
+  OBJXREF  /RM  test1  test2
+
+OBJXREF genererÖ un rapporto come questo:
+
+  Module: TEST1 defines the following symbols:
+
+     HELLO
+     NOTUSED
+
+  Module: TEST2 defines the following symbols:
+
+     GOODBYE
+     SAYHELLO
+
+
+Rapporto sui riferimenti (/RR) (rapporto standard)
+---------------------------------------------------
+
+Un rapporto sui riferimenti elenca ogni nome public con il modulo di
+definizione tra parentesi tonde sulla stessa riga. I moduli che si
+riferiscono a questo nome public vengono elencati sulle seguenti
+righe rientrate dal margine sinistro.
+
+Se si immette questo sulla riga di comando,
+
+  OBJXREF  /RR  test1  test2
+
+OBJXREF genererÖ un rapporto come questo:
+
+  GOODBYE (TEST2)
+          TEST1
+  HELLO (TEST1)
+          TEST2
+  NOTUSED (TEST1)
+  SAYHELLO (TEST2)
+          TEST1
+
+
+Rapporto sui riferimenti esterni (/RX)
+----------------------------------------
+
+Un rapporto sui riferimenti esterni elenca ogni modulo seguito da
+una lista di riferimenti esterni che contiene.
+
+Se si immette questo sulla riga di comando,
+
+  OBJXREF  /RX  test1  test2  CS.LIB
+
+OBJXREF genererÖ un rapporto come questo:
+
+  Module: TEST1 references the following symbols:
+
+    GOODBYE
+    SAYHELLO
+
+  Module: TEST2 references the following:
+
+    HELLO
+
+
+Rapporto sulle dimensioni di moduli (/RS)
+------------------------------------------
+
+Un rapporto sulle dimensioni elenca i nomi di segmenti seguiti da
+una lista di moduli che definiscono il segmento. Le dimensioni in
+byte vengono fornite in notazioni decimali e esadecimali. La
+parola uninitialized appare dove non viene assegnato alcun
+valore iniziale ai simboli definiti nel segmenti. I segmenti
+definiti i corrispondenza degli indirizzi assoluti in un file
+.ASM vengono marcati Abs a sinistra della dimensione del segmento.
+
+Se si immette questo sulla riga di comando,
+
+  OBJXREF  /RS  test1  test2
+
+OBJXREF genererÖ un rapporto come questo:
+
+  ;Module sizes by segment
+  STACK
+             512 (00200h)    TEST1, uninitialized
+             512 (00200h)    total
+  _DATA
+              12 (0000Ch)    TEST1
+              10 (0000Ah)    TEST2
+              22 (00016h)    total
+  _TEXT
+              24 (00018h)    TEST1
+               8 (00008h)    TEST2
+              32 (00020h)    total
+
+
+Rapporto sul tipo di classe (/RC)
+-----------------------------------
+
+Un rapporto sul tipo di classe elenca le definizioni delle
+dimensioni del segmento tramite classe di segmento. La classe CODE
+contiene le istruzioni, la classe DATA contiene i dati non
+inizializzati e la classe BSS contiene i dati non inizializzati.
+I segmenti che non hanno un tipo di classe verranno elencati sotto
+la notazione "No class type."
+
+Se si immette questo sulla riga di comando,
+
+  OBJXREF  /RC  test1  test2
+
+OBJXREF genererÖ un rapporto come questo:
+
+  ;Module sizes by class
+  CODE
+              24 (00018h)    TEST1
+               8 (00008h)    TEST2
+              32 (00020h)    total
+  DATA
+              12 (0000Ch)    TEST1
+              10 (0000Ah)    TEST2
+              22 (00016h)    total
+  STACK
+             512 (00200h)    TEST1, uninitialized
+             512 (00200h)    total
+
+
+Rapporto sui nomi dei simboli ai quali non c'ä alcun riferimento (/RU)
+------------------------------------------------------------------------
+
+Un rapporto sui nomi dei simboli ai quali non c'ä alcun riferimento elenca
+i moduli che definiscono i nomi public ai quali non c'ä alcun riferimento
+in altri moduli. Tale simbolo ä:
+
+Usato solo all'interno del modulo in cui viene definito e non deve
+essere definito come simbolo public (in quel caso, se il modulo
+ä in C, la parola riservata static verrÖ aggiunta alla definizione; se
+il modulo ä in TASM, basta rimuovere la definizione public).
+
+Mai usato (pertanto puï essere eliminato per risparmiare spazio per
+il codice o per i dati).
+
+Se si immette questo sulla riga di comando,
+
+  OBJXREF  /RU  test1  test2
+
+OBJXREF genererÖ un rapporto ccome questo:
+
+  Module:
+
+     TEST1 defines the following unreferenced symbols:
+
+     NOTUSED
+
+
+Rapporto prolisso (/RV)
+------------------------
+
+Se si immette /RV sulla riga di comando, verrÖ generato un rapporto di
+ogni genere.
+
+
+Esempi di come usare OBJXREF
+-----------------------------
+
+Questi esempi suppongono che i file di applicazione si trovino nella
+directory corrente dell'unitÖ predefinita e che i file di libreria
+si trovino nella directory \LIB.
+
+
+Esempio 1   C>OBJXREF test1 test2 \lib\io.lib
+
+In questo esempio, oltre ai file TEST1.OBJ e TEST2.OBJ, viene
+specificato anche il file di libreria \ LIB\IO.LIB. PoichÇ
+nessun tipo di rapporto viene specificato, il rapporto che ne
+risulta ä il rapporto sui riferimenti standard, che elenca i nomi
+public e i moduli che vi si riferiscono.
+
+
+Esempio 2   C>OBJXREF /RV /Ltest1.arf
+
+Il file di risposta TEST1.ARF di TLINK contiene la stessa lista di
+file della riga di comando nell'Esempio 1. L'opzione /RV viene
+specificata in modo che venga generato un rapporto di ogni genere.
+TEST1.ARF contiene
+
+  test1 test2
+  test1.exe
+  test1.map
+  \lib\io
+
+
+Esempio 3   C>OBJXREF /F /RV \lib\IO.lib
+
+Questo esempio riporta tutti i moduli nel file di libreria IO.LIB;
+OBJXREF puï generare dei rapporti utili anche quando i file
+specificati non creano un programma completo. La /F fa sç che
+tutti i moduli nel file IO.LIB vengano inclusi nel rapporto.
+
+
+Messaggi di errore ed avvertimenti
+------------------------------------
+
+OBJXREF genera due tipi di messaggi diagnostici: messaggi di
+errore ed avvertimenti.
+
+
+Messaggi di errore
+-------------------
+
+Out of memory
+   OBJXREF svolge l'elaborazione in memoria e puï esaurire la memoria
+   anche se TLINK ä in grado di collegare la stessa lista di file
+   correttamente. Quando accade questo, OBJXREF si arresta. Si
+   rimuovano i programmi residenti in memoria per ottenere pió spazio
+   o per aggiungere pió RAM.
+
+Avvertimenti
+-------------
+
+WARNING: Unable to open input file rrrr
+   Il file di input rrrr potrebbe non essere localizzato o aperto.
+   OBJXREF procede al file successivo.
+
+WARNING: Unknown option - oooo
+   Il nome dell'opzione oooo non ä riconosciuto da OBJXREF.
+   OBJXREF ignora l'opzione.
+
+WARNING: Unresolved symbol nnnn in module mmmm
+   Il nome public nnnn a cui si fa riferimento nel modulo mmmm non
+   ä definito in nessuno dei file .OBJ o .LIB specificati. OBJXREF
+   identifica il simbolo in qualsiasi rapporto che genera come
+   se vi fosse un riferimento ad esso ma non fosse definito.
+
+WARNING: Invalid file specification ffff
+   Alcune parti del nome del file ffff non sono valide. OBJXREF
+   procede al file successivo.
+
+WARNING: No files matching ffff
+   Il file chiamato ffff elencato sulla riga di comando o in un
+   file di risposta potrebbe non essere localizzato o aperto.
+   OBJXREF salta al file successivo.
+
+WARNING: Symbol nnnn defined in mmmm1 duplicated in mmmm2
+   Il nome public nnnn ä definito nei moduli mmmm1 e mmmm2.
+   OBJXREF ignora la seconda definizione.
+
+
+TCREF: Il generatore di cross-reference del modulo sorgente
+--------------------------------------------------------------
+
+TCREF ä progettato per generare due rapporti: una lista di
+cross-reference di dove vengono usati e definiti tutti i simboli
+globali, ed una lista dei moduli individuali e dei simboli usati
+all'interno di essi.
+
+TCREF accetta come input un gruppo di file .XRF generati da TASM.
+Questi file contengono le informazioni di cross-reference dei moduli
+individuali. Questi file di input, generano un singolo file .REF
+che contiene uno o pió rapporti in testo ASCII. Il formato di comando
+ä il seguente:
+
+  TCREF <XRF file separati da '+' caratteri> ','
+     <REF nomefile> <opzioni>
+
+Per esempio, il seguente comando assumerebbe FOO1.XRF,FOO2.XRF e
+FOO3.XRF come file di input, e genererebbe FOO.REF:
+
+  TCREF foo1+foo2+foo3,foo
+
+
+File di risposta
+-----------------
+
+Anche TCREF accetta i file ASCII come stringhe di comandi. Si
+faccia precedere il nome del file da un segno @ per includere un
+file nella stringa di comando. Ad esempio,
+
+  TCREF @dofoo
+
+dove DOFOO contiene
+
+  foo1+foo2+foo3,foo
+
+sarÖ come l'esempio precedente.
+
+
+CompatibilitÖ con TLINK
+------------------------
+
+TCREF accetta le stringhe di comandi che TLINK accetta. TCREF
+ignora qualsiasi opzione e campo irrilevanti, come qualsiasi
+libreria o file .MAP, o opzioni che appartengono solo alla
+funzione del linker. Allo stesso modo, se un file .XRF non puï
+essere localizzato, TCREF lo ignorerÖ.
+
+Attenzione! Quando si usa un file di risposta di TLINK, non si
+devono specificare esplicitamente le estensioni di file, poichÇ
+facendo cosç si forzerebbero le estensioni di file standard interne
+di TCREF e probabilmente l'operazione non andrebbe a buon fine. Ad
+esempio, se il file di risposta indica un file
+
+  foo1+foo2+foo3,foo.exe
+
+non si dovrebbe usare questo file senza modifiche con TCREF poichÇ
+il file .REF che crea verrÖ chiamato FOO.EXE, presumibilmente
+riscrivendo il programma.
+
+
+Opzioni
+---------
+
+TCREF accetta tutte le opzioni presenti in TLINK, ma la maggior
+parte di queste viene scartata. TCREF usa solo queste opzioni:
+
+   /c fa sç che il rapporto sui simboli GLOBAL distingua le maiuscole
+   dalle minuscole.
+
+   /r genera dei rapporti sui simboli LOCAL per tutti i moduli specificati.
+
+   /p# imposta la lunghezza delle pagine del rapporto a numero di
+   righe.
+
+   /w# imposta la larghezza delle pagine di rapporto a numero di
+   colonne.
+
+Output
+-------
+
+TCREF ha molta cura nell'interpretare correttamente il senso semantico
+dei simboli. Le informazioni di cross-reference sono inutili quando i
+simboli con lo stesso nome ma con significato diverso vengono
+raggruppati. Perciï TCREF considera il campo di validitÖ (SCOPE)
+di un simbolo quando genera i suoi rapporti. Le informazioni di
+cross-reference sono sempre elencate per il file sorgente e per il
+numero di righe sorgente.
+
+
+Il rapporto globale (o campo di validitÖ del linker)
+-----------------------------------------------------
+
+Il rapporto globale di TCREF elenca le informazioni di cross-reference
+per i simboli globali come appaiono al linker. Si usi l'opzione /c
+se si vogliono generare dei rapporti che distinguano le maiuscole dalle
+minuscole.
+
+In questo rapporto, i simboli globali appaiono in ordine
+alfabetico nella colonna di sinistra. I riferimenti, organizzati
+dal file sorgente, vengono elencati nella colonna di destra.
+Ovunque appaia il segno # significa che la definizione si
+verifica in quella riga.
+
+Ecco una stampa dei simboli di esempio:
+
+  Global Symbols       Cref  #  = definition
+  BAR                  TEST.ASM:  1  3  6  9  12  15  18 +
+                                              21  23  29
+                                        #  TEST2.ASM:  2  4  6  #8
+
+Cosa indica? Il segno iniziale # prima di TEST2.ASM indica
+che BAR ä stato definito da qualche parte in quel modulo. Per ogni
+file sorgente, viene elencata la riga sorgente in corrispondenza
+della quale si ä verificato il riferimento. Questa lista puï
+occupare pió di una riga, come nel caso delle righe di TEST.ASM.
+Il carattere + indica la continuazione sulla riga successiva. Infine,
+il segno # prima dell'8 indica che si ä verificata una definizione di
+BAR in TEST2.ASM sulla riga 8.
+
+
+Il rapporto locale (o campo di validitÖ di modulo)
+----------------------------------------------------
+
+Se si specifica /r sulla riga di comando, verrÖ generato un rapporto
+locale per ogni modulo. Esso conterrÖ tutti i simboli usati in
+quel modulo, elencati in ordine alfabetico. L'opzione /c non avrÖ
+alcun effetto su questi rapporti, poichÇ l'appropriata direttiva
+di distinzione tra maiuscole e minuscole ä giÖ stata determinata
+durante l'assemblaggio.
+
+Come i rapporti globali, i riferimenti sono organizzati dal file
+sorgente nella colonna di destra. Una stampa di esempio appare
+nel modo seguente:
+
+  Module TEST.ASM Symbols        Cref  # = definition
+  UGH                            TEST.ASM:  1  3  6  9  12  15  18 +
+                                                        21  23  29
+                                                 #  UGH.INC:  #2
+

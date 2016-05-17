@@ -1,0 +1,225 @@
+                      PROGRAMMA DI SERVIZIO
+                           TURBO HELP
+                     ========================
+
+Questo file spiega come usare THELP.COM. THELP Š un programma di
+servizio residente in memoria che fornisce l'aiuto interattivo
+per Turbo Assembler. Se si sta usando Turbo Debugger, ad esempio,
+si pu• caricare THELP, quindi eseguire il debugging ed ottenere
+l'aiuto interattivo per Turbo Assembler mentre si sta eseguendo
+il debugging.
+
+
+INDICE
+========
+1.  Avviamento di THELP
+2.  Sommario delle opzioni della riga di comando
+3.  Spiegazione dettagliata dei tasti usati quando THELP Š attivo
+4.  Spiegazione dettagliata delle opzioni della riga di comando
+
+
+1.  AVVIAMENTO DI THELP
+=========================
+
+Si carichi THELP digitando THELP sulla riga di comando del DOS.
+Ci si assicuri che il file di aiuto si trovi nella directory corrente
+o si usi l'opzione della riga di comando /F (descritta sopra). Il
+programma INSTALL inserisce le informazioni di percorso corrette in THELP.
+
+  Requisiti di memoria
+    THELP richiede circa 21K byte.
+
+  Tasto dedicato predefinito
+    Il tasto dedicato predefinito Š il 5 del tastierino numerico
+    (codice di scansione 4ch, shift di stato 00h).
+
+Se si sta usando SideKick Plus o SideKick 1.x, ci si accerti di
+aver caricato THELP prima di caricare SideKick.
+
+
+2. SOMMARIO DELLE OPZIONI DELLA RIGA DI COMANDO
+=================================================
+
+  SINTASSI:  THELP [opzioni]
+
+Ecco un sommario delle opzioni della riga di comando di THELP. Se si
+usa pi— di un'opzione, si deve separarle con degli spazi.
+
+  /C#xx     Seleziona il colore: #=numero colore, xx=valore del
+            colore in esadecimali
+  /Fnome    Percorso completo e nome del file di aiuto
+  /H,/?,?   Visualizza questo schermo di aiuto
+  /Kxxyy    Cambia il tasto dedicato: xx=stato di shift(in
+            esadecimali), yy=codice di scansione(in esadecimali)
+  /S+       Attiva il controllo delle interferenze del video
+            (utile per gli adattatori CGA pi— vecchi).
+  /S-       Disattiva il controllo delle interferenze del video
+            (per una risposta video pi— rapida).
+  /U        Rimuove THELP dalla memoria
+  /W        Scrive le opzioni in THELP.COM ed esce
+
+
+3. SPIEGAZIONE DETTAGLIATA DEI TASTI USATI QUANDO THELP E' ATTIVO
+==================================================================
+
+  Tasti direzionali:        Spostano il cursore.
+  PgUp/PgDn:                Spostano il cursore.
+
+  Shift-Tasti direzionali:  Spostano il cursore mentre si marca
+                            un blocco.
+
+  TAB:                      Sposta il cursore alla parola riservata successiva.
+  Shift-TAB:                Sposta il cursore alla parola riservata precedente.
+
+  HOME:                     Va all'inizio della riga.
+  END:                      Va alla fine della riga.
+
+  ENTER:                    Seleziona la voce di aiuto della voce evidenziata
+                            sullo schermo di aiuto corrente.
+
+  ESC:                      Fine Aiuto.
+
+  Shift-F1:                 Indice Aiuto. F1 da qualsiasi schermo di aiuto fa
+                            apparire l'indice di aiuto.  Si pu• ricercare una
+                            parola riservata specifica in modo incrementale.
+                            Ad esempio, si pu• trovare "printf" digitando
+                            p r i.  Con ogni lettera che si digita, si salta
+                            alla parola riservata che inizia con p, quindi
+                            a pr, poi a pri, ecc.
+
+  ALT-F1:                   Visualizza in ordine inverso gli ultimi 20 schermi
+                            che si sono visti.
+
+  CTRL-Tasto P:             Inserisce il blocco marcato o il testo di esempio
+                            nell'applicazione.
+
+
+
+4.  SPIEGAZIONE DETTAGLIATA DELLE OPZIONI DELLA RIGA DI COMANDO
+=================================================================
+
+
+/C#xx     Seleziona il colore: #=numero colore, xx=valore del
+          colore in esadecimali
+
+Esistono dodici colori possibili, descritti come segue:
+
+  0 = Attributo a colori del bordo
+  1 = Attributo monocromatico del bordo
+  2 = Attributo a colori del testo
+  3 = Attributo monocromatico del testo
+  4 = Attributo a colori della parola riservata
+  5 = Attributo monocromatico della parola riservata
+  6 = Attributo a colori della parola riservata
+  7 = Attributo monocromatico della parola riservata selezionata
+  8 = Attributo a colori del testo di esempio
+  9 = Attributo monocromatico del testo di esempio
+  A = Attributo a colori del blocco marcato
+  B = Attributo monocromatico del blocco marcato
+
+I numeri dei colori di un video a colori compatibile IBM sono i
+seguenti:
+
+Prima Cifra (Sfondo)              Seconda Cifra (Primo piano)
+
+0 -- Nero                             0 -- Nero
+1 -- Blu                              1 -- Blu
+2 -- Verde                            2 -- Verde
+3 -- Cyan                             3 -- Cyan
+4 -- Rosso                            4 -- Rosso
+5 -- Magenta                          5 -- Magenta
+6 -- Marrone                          6 -- Marrone
+7 -- Grigio                           7 -- Grigio
+                                      8 -- Nero scuro
+ Effettuando un OR il valore del      9 -- Blu scuro
+ colore con 80 (esadecimale) provoca  A -- Verde scuro
+ un lampeggiamento (purch‚ il         B -- Cyan scuro
+ lampeggiamento non sia stato         C -- Rosso scuro
+ disattivato).                         D -- Magenta scuro
+                                      E -- Marrone intenso (Giallo)
+                                      F -- Grigio intenso (Bianco)
+
+Sui monitor monocromatici, i valori attribuiti possono differire
+largamente, quindi occorrer… fare degli esperimenti.
+
+
+/Fnome       Intero percorso e nome del file di aiuto
+
+Il nome che segue l'opzione /F dovrebbe essere il nome completo
+del percorso di unit…/directory del file di aiuto da usare; per
+esempio,
+
+    THELP /FC:\TP\TURBO.HLP
+    THELP /FC:\TURBOC\TASM.TAH
+
+Di norma, THELP cerca il file di aiuto sull'unit… corrente e sulla directory.
+
+
+/H,/?,?      Visualizza lo schermo di aiuto
+
+Questa opzione visualizza un sommario delle opzioni della riga di
+comando di THELP
+
+
+/Kxxyy       Cambia il tasto dedicato: xx=stato di shift,
+             yy=codice di scansione
+
+Virtualmente qualsiasi combinazione di stato di shift/codice di
+scansione potrebbe essere selezionata. Un rapido sommmario di
+alcuni stati di shift e di codici di scansione viene riportato
+qui di seguito:
+
+  Stati di Shift (potrebbero essere combinati con un OR logico)
+
+    shift destro   01h
+    shift sinistro 02h
+    control        04h
+    alt            08h
+
+  Codici di scansione
+
+    A   --- 1eh     N   --- 31h     0   --- 0bh     F1  --- 3bh
+    B   --- 30h     O   --- 18h     1   --- 02h     F2  --- 3ch
+    C   --- 2eh     P   --- 19h     2   --- 03h     F3  --- 3dh
+    D   --- 20h     Q   --- 10h     3   --- 04h     F4  --- 3eh
+    E   --- 12h     R   --- 13h     4   --- 05h     F5  --- 3fh
+    F   --- 21h     S   --- 1fh     5   --- 06h     F6  --- 40h
+    G   --- 22h     T   --- 14h     6   --- 07h     F7  --- 41h
+    H   --- 23h     U   --- 16h     7   --- 08h     F8  --- 42h
+    I   --- 17h     V   --- 2fh     8   --- 09h     F9  --- 43h
+    J   --- 24h     W   --- 11h     9   --- 0ah     F10 --- 44h
+    K   --- 25h     X   --- 2dh
+    L   --- 26h     Y   --- 15h
+    M   --- 32h     Z   --- 2ch
+
+
+  Solo per tastiere avanzate (potrebbe non funzionare con tutti i
+  computer o le tastiere)
+
+    F11 --- 57h
+    F12 --- 58h
+
+/S           Controlla le interferenze del video.
+
+Alcuni CGA pi— vecchi hanno la tendenza a produrre una
+"interferenza" quando il software cerca di scrivere direttamente
+nel loro spazio di memoria.  Se si nota questa interferenza si
+dovrebbe avviare THELP con /S+ per attivare il codice di controllo
+delle interferenze.  Si potrebbe voler usare l'opzione /W
+(si veda sotto) per renderlo permanente.  Il controllo delle
+interferenze richiede tempo ed Š meglio evitarlo.  Per disattivare
+il controllo delle interferenze si usi /S-; l'opzione normalmente
+attiva.
+
+/U           Rimuove THELP dalla memoria
+
+Questa opzione rimove THELP dalla memoria. Se altri programmi residenti
+(TSR) sono stati caricati dopo THELP, ci si accerti di rimuoverli prima
+di rimuovere THELP.
+
+
+/W           Scrive le opzioni in THELP.COM ed esce
+
+Il parametro /W crea una nuova versione di THELP che usa le
+opzioni che si desiderano di norma. Tutte le opzioni possono
+essere specificate e rese "permanenti".

@@ -1,0 +1,122 @@
+
+                          WHEREIS 2.0
+                        ================
+
+  WHEREIS Š un programma di servizio che ricerca un disco per
+  i file che corrispondono ad una specifica di file fornita
+  dall'utente. Il programma di servizio esegue una ricerca
+  ricorsiva in qualsiasi sottodirectory che trova durante
+  la sua ricerca. A WHEREIS possono essere fornite diverse
+  specifiche di file e questi mostrer… tutti i file che
+  corrispondono a qualsiasi specifica di file data. WHEREIS pu•
+  anche essere istruito ad eseguire un comando del DOS su ognuno
+  dei file che viene trovato.
+
+  Per effettuare la ricerca di una specifica di file particolare
+  in tutto il disco, si eseguir… WHEREIS nel modo seguente:
+
+    whereis *.asm
+
+  In questo modo ricercher… in tutta l'unit… (l'unit… corrente) e
+  visualizzer… ogni istanza di un file che corrisponde alla
+  specifica *.asm del file.
+
+  Si pu• anche fornire uno specificatore di unit… esplicito:
+
+    whereis a:\*.asm
+
+  In questo modo ricercher… nell'unit… A: tutti i file corrispondenti.
+
+  Se non si vuole ricercare in tutto il disco, si pu•
+  esplicitamente definire il percorso dal quale iniziare la
+  ricerca ricorsiva. Ad esempio,
+
+    whereis c:\borland\tasm\*.asm
+
+  ricercher… tutti i file corrispondenti *.asm nella directory
+  c:\borland\tasm e in qualsiasi sottodirectory sotto di essa.
+
+  Si pu• fermare l'esecuzione di WHEREIS premendo qualsiasi tasto
+  mentre viene eseguito. Apparir… un messaggio che indicher… che
+  l'esecuzione Š stata interrotta. Se si vuole arrestare
+  l'esecuzione di WHEREIS, si prema la barra spaziatrice. Verr…
+  richiesto di premere la barra spaziatrice una seconda volta per
+  riprendere la ricerca.
+
+  Se si vogliono ricercare diverse specifiche di file, basta
+  immettere le specifiche multiple di file sulla riga di comando.
+  Ad esempio,
+
+    whereis c:\borland\tasm\*.asm *.inc
+
+  ricercher… tutti i file che corrispondono a *.asm o *.inc nella
+  directory c:\borland\tasm e in qualsiasi sottodirectory sotto di
+  essa. Si noti che solo la prima specifica di file pu• contenere
+  una specifica di unit… e di percorso.
+
+  Se si vuole eseguire un comando del DOS in ciascun file che
+  WHEREIS trova, si pu• indicare il comando del DOS tra
+  delimitatori sulla riga di comando. I delimitatori validi sono
+  '', "", o []. Il comando del DOS dovrebbe contenere una delle
+  seguenti variabili, che sostituiranno una data stringa sulla
+  riga di comando usata per il comando del DOS:
+
+     %1 - Inserire il percorso completo, il nome del file e
+          l'estensione
+     %2 - Nome del file ed estensione (nessun percorso)
+     %3 - Solo il percorso.
+     %4 - Solo il nome del file prima dell'estensione seguita da a .
+     %5 - Solo l'estensione, preceduta da a .
+
+  Ad esempio,
+
+     whereis *.bak [del %2]
+
+  canceller… tutti i file .BAK dall'unit….
+
+  Un altro esempio Š,
+
+     whereis *.asm *.inc [grep -i ideal %2]
+
+  che ricercher… tutti i file *.ASM e *.INC della parola ideal.
+
+  Quando viene fornito il comando del DOS, verr… dato nella stessa
+  directory in cui Š stato trovato il file. Si noti che il comando
+  del DOS potrebbe anche essere una chiamata al file batch.
+  Qualsiasi comando, file eseguibile, o file batch, che viene
+  specificato dovrebbe essere raggiungibile con la variabile
+  di ambiente corrente PATH, o dovrebbe essere fornito un percorso
+  specifico del file eseguibile o del file batch all'interno dei
+  delimitatori. Inoltre, il comando dovrebbe ritornare alla stessa
+  directory da cui Š stato chiamato.
+
+  Poich‚ WHEREIS chiama COMMAND.COM ad eseguire il comando DOS
+  dato per ogni file che viene trovato, l'esecuzione Š migliore
+  se COMMAND.COM viene messo in un disco RAM e la variabile di
+  ambiente COMSPEC= viene aggiornata per puntare alla nuova copia
+  di COMMAND.COM. Per una completa trattazione sui dischi RAM e su
+  come impostare la variabile di ambiente COMSPEC=, si consulti
+  il manuale del DOS.
+
+
+                    COME ASSEMBLARE WHEREIS
+                   =========================
+
+  Per assemblare WHEREIS, si esegua il seguente comando sulla riga
+  di comando del DOS:
+
+    make -fwhereis
+
+  In questo modo eseguir… il programma di creazione della riga di
+  comando MAKE.EXE e lo passer… al file di creazione WHEREIS.MAK.
+  Per istruzioni sull'assemblaggio di moduli specifici nel programma
+  WHEREIS, si rimanda ai commenti nella parte superiore del modulo.
+
+          LE NUOVE CARATTERISTICHE DI TURBO ASSEMBLER 2.0
+         ==================================================
+
+  WHEREIS Š stato riscritto dopo Turbo Assembler 1.01 per mostrare
+  alcune delle nuove caratteristiche di Turbo Assembler 2.0. Il
+  file IWHEREIS.ASM contiene molte di quelle caratteristiche. Si
+  rimanda a quel file per ulteriori dettagli.
+

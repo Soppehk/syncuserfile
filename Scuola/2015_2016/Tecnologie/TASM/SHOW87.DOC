@@ -1,0 +1,64 @@
+
+
+                                 SHOW87
+				========
+		Copyright (c) 1988, 1989 Borland International
+                            All Rights Reserved
+
+       SHOW87 Š un programma residente in memoria che visualizza
+       l'intero stato del coprocessore quando Š presente. Questo
+       Š utile quando si sta effettuando il debugging del codice
+       che contiene le istruzioni dell'8087.
+
+       SHOW87 ha due modalit… di installazione. La modalit…
+       standard Š quella di uscita in shell nella quale SHOW87 esce
+       in shell al DOS, invece di diventare veramente residente.
+       Questo consente di deinstallare SHOW87 digitando EXIT su
+       qualsiasi riga di comando del DOS. Lo svantaggio della
+       modalit… di uscita in shell Š che deve essere chiamato
+       un secondo interprete dei comandi che usa da 3.000 a
+       4.000 byte in pi— di memoria. L'altra modalit… di
+       installazione Š quella residente, che viene specificata
+       dal parametro /R. SHOW87 usa meno memoria in questa
+       modalit…, ma non pu• essere rimosso. Solo SHOW87 usa
+       circa 5.700 byte di memoria.
+
+       Una volta installato, SHOW87 pu• essere chiamato in ogni
+       momento premendo Alt-7. Chiamando SHOW87 si fa in modo che
+       la met… dello schermo superiore visualizzi i flag, i
+       registri, e altre informazioni che riguardano l'8087.
+       Premendo qualsiasi tasto si esce e si ripristina lo schermo.
+       Di norma, si installer… SHOW87 prima di effettuare il
+       debugging del codice dell'8087 e quindi si rimuover… SHOW87
+       quando non se ne ha pi— bisogno.
+
+       Se SHOW87 non viene installato in modo corretto, visualizzer…
+       un messaggio di errore e terminer… l'esecuzione. Le
+       maggiori ragioni che provocano un simile errore sono:
+       memoria insufficiente, COMMAND.COM non trovato, o nessun
+       80x87 scoperto. COMMAND.COM occorre solo quando SHOW87
+       esce in shell al DOS. SHOW87 trova il file COMMAND.COM
+       cercando la variabile di ambiente COMSPEC (si rimanda al
+       manuale del DOS).
+
+       SHOW87 visualizza tutte le informazioni dell'8087, compresi
+       il puntatore all'istruzione, il puntatore all'operando, il
+       codice di operazione; il controllo, lo stato, e le parole
+       etichettate; la precisione, l'arrotondamento, e le
+       impostazioni di controllo infinito; la parte superiore
+       dello stack; i codici di condizione e le loro varie
+       interpretazioni; le impostazioni di eccezione e di maschere
+       degli interrupt; e i valori di registro.
+
+       Le impostazioni del codice di condizione rappresentano
+       rispettivamente C3, C2, C1, e C0. I campi Comp, Test, ed
+       Exam visualizzano il significato dei codici di condizione
+       come restituito dalle istruzioni FCOM, FTST, e FXAM.
+
+       I valori dei registri vengono visualizzati in uno dei due
+       modi. Se il numero ha un'impostazione VALID, il numero viene
+       visualizzato nel formato decimale. Se il numero ha un'impostazione
+       SPECIAL o EMPTY, verr… visualizzato un dump esadecimale del numero.
+       Dopo la mantissa e l'esponente, viene visualizzato il tipo
+       di valore (come interpretato dall'istruzione FXAM).
+

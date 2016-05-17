@@ -1,0 +1,597 @@
+
+NUOVE CARATTERISTICHE DI TURBO ASSEMBLER 2.0
+==============================================
+
+Turbo Assembler 2.0 della Borland ä ora un assemblatore a passaggi
+multipli che effettua la risoluzione di riferimento in avanti, svolge
+l'assemblaggio ad una velocitÖ di 48.000 righe al minuto, ä compatibile
+con MASM, e dispone di un'ideale sintassi estesa opzionale.
+
+Oltre a tutte le caratteristiche della versione 1.0, Turbo Assembler 2.0
+offre quanto segue:
+
+  o Istruzione PUBLICDLL
+  o Passaggi multipli per l'eliminazione delle istruzioni NOP
+  o Estensioni CALL
+  o Estensioni di istruzioni PUSH, POP
+  o Estensione COMM
+  o Carattere di continuazione riga generalizzato
+  o Procedure specifiche di linguaggio, extrns, publics
+  o Nuovi identificatori di MODEL - WINDOWS
+  o Segmenti VIRTUAL
+  o CompatibilitÖ con QASM
+  o Riconoscimento istruzione del 486
+  o Nuovi messaggi di errore TASM 2.0
+  o Tipo CODEPTR
+  o Istruzione RETCODE
+  o Direttive SMART/NOSMART
+  o Gestione in overlay del Codice oggetto
+
+
+                       --Istruzione PUBLICDLL--
+
+  La direttiva PUBLICDLL consente di definire le etichette di
+  programma e le procedure in modo che siano dei punti di ingresso
+  di collegamento dinamici e rendendole note agli altri moduli, che
+  consentono di costruire delle librerie di collegamento dinamiche
+  in codice assembly. Ad esempio,
+
+           PUBLICDLL XYPROC       ;rende la procedura XYPROC
+    XYPROC PROC NEAR              ;accessibile come punto
+                                  ;di ingresso a collegamento
+                                  ;dinamico
+
+  La sintassi di PUBLICDLL ä la seguente:
+
+    PUBLICDLL [linguaggio] simbolo [,[linguaggio] simbolo]...}
+
+  simbolo ä noto nel file oggetto come un punto di ingresso
+  di collegamento dinamico in modo che i programmi vi possano
+  accedere sotto OS/2. Questa istruzione viene usata solo per
+  aiutare a costruire una libreria di collegamento dinamica OS/2.
+  Se non si rende un simbolo public, vi si puï accedere solo dal
+  file sorgente corrente.
+
+  Nella maggioranza dei casi, si dichiarano PUBLICDLL solo le
+  etichette PROC, ma anche altre etichette di programma, nomi di
+  variabili di dati e costanti numeriche definite con equivalenze EQU
+  essere dichiarate PUBLICDLL.
+
+  Lo specificatore di linguaggio opzionale fa sç che venga applicata
+  al nome dei simboli qualsiasi convenzione specifica di linguaggio.
+  Ad esempio, usando lo specificatore del C si farÖ in modo che il nome
+  dei simboli sia preceduto da una sottolineatura quando viene reso noto
+  nel file oggetto. Gli specificatori di linguaggio validi sono C,
+  PASCAL, BASIC, FORTRAN, PROLOG, e NOLANGUAGE.
+
+  COMM, EXTRN, GLOBAL, e PUBLIC sono istruzioni collegate.
+
+
+--Passaggi multipli per l'eliminazione delle istruzioni NOP--
+
+  Turbo Assembler 2.0 puï passare il codice sorgente pió di una
+  volta o per compatibilitÖ con alcune costruzioni dipendenti dal
+  passaggio di MASM o per rimuovere le istruzioni NOP che sono state
+  aggiunte al codice a causa dei riferimenti in avanti. Questa
+  caratteristica viene attivata all'opzione /m# della riga di comando,
+  dove # ä il numero massimo di passaggi consentiti. Turbo Assembler
+  accerta in modo automatico il bisogno di eseguire dei passaggi in pió
+  fino ad un massimo specificato.
+
+  L'opzione /m della riga di comando imposta il numero massimo
+  di passaggi assembly:
+
+    /M[npassaggi]
+
+  Per una massima compatibilitÖ con MASM, dovrebbero essere usati
+  due passaggi (/m2). Se non si specifica il numero di passaggi,
+  ne vengono predefiniti cinque.
+
+  La compatibilitÖ dei passaggi multipli di TASM 2.0 migliora la
+  compatibilitÖ con MASM nelle aree seguenti:
+ 
+    1) Qualsiasi costruzione che genera un avvertimento "Pass-
+       dependent construction" in TASM 1.0. Queste comprendono
+       le costruzioni che contengono la direttiva IF2, ed alcune
+       costruzioni con IFDEF o IFNDEF. Se si abilita l'opzione /m,
+       Turbo Assembler assemblerÖ questo modulo in modo corretto
+       ma non ottimizzerÖ il codice rimuovendo l'istruzione NOP, senza
+       tenere conto dei passaggi consentiti. Se si verifica questo
+       compare l'avvertimento "Module is pass dependent--compatibility
+       pass was done".
+
+    2) Riferimento in avanti a macro.
+ 
+  La capacitÖ di eliminare le istruzioni NOP migliora anche l'uso
+  di altre caratteristiche di TASM, vale a dire la modalitÖ di
+  operazione JUMPS. ad esempio,
+ 
+    jumps
+            jnz foobar
+    foobar:
+ 
+  Sotto TASM 1.0, JNZ genera 3 NOP, perchÇ si fa un riferimento
+  in avanti a FOOBAR. Con l'opzione /m attivata in TASM 2.0, queste NOP
+  vengono eliminate: la modalitÖ JUMPS puï essere attivata senza
+  che vengano generate le dispendiose istruzioni NOP.
+ 
+  Di solito, sono sufficienti due passaggi per eliminare tutte le
+  NOP. Di quando in quando, tuttavia, possono essere richiesti
+  pió passaggi. Se si necessita di una velocitÖ di compilazione
+  maggiore, si mettano le forzature corrette dovunque in modo che
+  un singolo passaggio generi un codice ottimale.
+
+
+                      --Estensioni CALL--
+
+  In Turbo Assembler l'istruzione CALL ä stata estesa per
+  consentire alle routine di linguaggi di alto livello di
+  essere chiamate in un modo indipendente dal linguaggio.
+  Qualsiasi istruzione CALL puï ora specificare una lista di
+  linguaggi e di argomenti della routine che si chiama. Turbo
+  Assembler genera in modo automatico la predisposizione dello stack
+  necessaria e il codice di pulizia richiesto per trasferire
+  gli argomenti in una routine di alto livello scritta nel
+  linguaggio specificato. La sintassi ä la seguente:
+ 
+    CALL <destinazione> <linguaggio opzionale>,
+         <primo argomento>,<secondo argomento>,...
+ 
+  Ad esempio,
+ 
+    call far ptr abc pascal,      ax dx,word ptr wordval
+ 
+  Questo esempio genera una chiamata far alla routine ABC del
+  Pascal, che richiede due argomenti: uno di tipo DWORD e uno di
+  tipo WORD. L'argomento DWORD sembra trovarsi in AX e DX mentre
+  quello WORD in WORDVAL.
+ 
+  Se il linguaggio opzionale non viene specificato, viene assunto
+  il linguaggio standard corrente.
+ 
+  Un tempo, per chiamare una routine di linguaggio di alto
+  livello, gli argomenti dovevano essere esplicitamente spinti
+  sullo stack, e lo stack doveva essere esplicitamente regolato
+  (dopo la chiamata) a seconda del linguaggio. Le nuove estensioni
+  CALL risparmiano la fatica di fare tutto queto esplicitamente.
+
+
+                 --Estensioni di istruzioni PUSH, POP--
+
+  In Turbo Assembler le istruzioni PUSH e POP sono state estese 
+  per consentire a pió di un argomento di apparire in una singola
+  istruzione PUSH o POP. Ad esempio,
+
+    push ax dx       ;equivalente a PUSH AX quindi PUSH DX
+    pop  dx ax       ;equivalente a POP DX quindi then POP AX
+
+  Inoltre, l'istruzione PUSH consente gli argomenti delle costanti
+  anche quando si genera il codice del processore 8086. Tali
+  istruzioni vengono sostituite nel codice oggetto da una sequenza
+  di 10 byte che simula l'istruzione PUSH del valore immediato
+  dell'80186/286/386.
+
+
+                          --Estensione COMM--
+
+  La direttiva COMM ä stata estesa per consentire alla dimensione
+  dell'elemento dell'array e al contatore dell'elemento dell'array
+  di essere selezionati indipendentemente l'uno rispetto all'altro
+  per le variabili pubbliche FAR. In questo modo si rende possibile
+  la generazione del codice inline di Turbo C++. Questa possibilitÖ
+  puï essere usata in modo vantaggioso da un programmatore esperto del
+  linguaggio assembly. La sintassi ä la seguente:
+ 
+    COMM FAR <id>{[<moltiplicatore della dimensione dell'elemento
+             dell'array>]}:<dimensione di base dell'elemento>{:
+             <contatore dell'array>}
+ 
+  Ad esempio, questo frammento di codice riserva un array di
+  410: 10 elementi ognuno di 41 byte:
+
+    COMM FAR ABC[41]:BYTE:10
+
+
+             --Carattere di continuazione riga generalizzato--
+
+  In TASM 2.0, ä stata aggiunta la caratteristica di continuazione
+  riga che funziona nella modalitÖ Ideal di TASM ed ä disponibile
+  anche quando la modalitÖ MASM 5.1 ä disattivata. Un backslash
+  (\) puï essere messo quasi ovunque come un carattere di
+  continuazione riga. Non puï essere usato per finire le stringhe
+  o gli identificatori. Il suo significato ä "leggere la riga
+  successiva a questo punto e continuare l'esecuzione". Perciï
+  puï essere usato in modo naturale senza perdere l'abilitÖ di
+  commentare ogni riga come desiderato. Ad esempio,
+
+    foo miastruttura \    ;Inizio completamento struttura.
+    <0               \    ;Il valore zero ä primo.
+    1,               \    ;Valore uno.
+    2>                    ;Valore due e fine struttura.
+
+  Esistono contesti in cui il carattere di continuazione riga non
+  viene riconosciuto. In generale, non viene riconosciuto in
+  nessun contesto dove i caratteri vengono trattati come testo
+  piuttosto che come identificatori, numeri, o stringhe, o nella
+  modalitÖ MASM quando la continuazione della riga viene usata
+  nei primi due simboli dell'istruzione. Ad esempio,
+
+    ifdif <123\>,<456\>
+
+  non riconosce i due caratteri di continuazione riga inclusi.
+
+    comment \
+    :
+
+  inizia un blocco commento, ma non definisce un simbolo NEAR
+  chiamato COMMENT.
+
+  Il carattere di continuazione riga non ä riconosciuto anche
+  all'interno di definizioni di macro. Viene riconosciuto,
+  tuttavia, quando la macro viene espansa.
+
+
+                   --Visualizzazione addizionale--
+ 
+  TASM 2.0 visualizza il numero di passaggi, i contatori di
+  errori e di avvertimenti e gli spazi restanti. Questo consente
+  di accertare quanto lavora TASM durante l'operazione di
+  compilazione.
+ 
+ 
+  --Procedure specifiche di linguaggio, extrns, publics, calls--
+
+  TASM 2.0 consente alle procedure, publics, extrns, e calls di
+  essere forzate con uno specificatore di linguaggio. Questo fa sç
+  che si disponga di un'ampia flessibilitÖ nello scrivere il
+  codice assembly che si interfaccia con i modelli multipli di
+  linguaggio. Anche l'istruzione MODEL ä stata estesa.
+ 
+  Ecco alcuni esempi di sintassi:
+
+    <nomeproc> PROC {<modificatore di linguaggio>} {<linguaggio>}
+                    {NEAR | FAR}
+                                                          {argomenti e usi}
+    EXTRN {<linguaggio>} <simbolo>:<distanza>, {<linguaggio>} 
+                                                  <simbolo>:<distanza>,...
+    PUBLIC {<linguaggio>} <simbolo>, ...
+    COMM {<linguaggio>} <simbolo>:<distanza>, ...
+    GLOBAL {<linguaggio>} <simbolo>:<distanza>, ...
+    PUBLICDLL {<linguaggio>} <simbolo>, ...
+    CALL <nomeproc> {{<linguaggio>}, {argomenti}}
+    .MODEL {<modificatore modello>} <modello> {<nome modulo>} {, 
+        {<modificatore linguaggio>} <linguaggio> {, <modificatore
+        linguaggio> } }
+
+   Ecco la sintassi dell'istruzione PROC in modalitÖ Ideal:
+
+    PROC {<modificatore linguaggio>} {<linguaggio>} <nomeproc>
+         {NEAR | FAR}
+                                                          {argomenti e usi}
+
+    I modelli legali sono TINY, SMALL, MEDIUM, COMPACT, LARGE, e
+    HUGE. Si noti che anche TPASCAL ä un modello legale.
+
+    I modificatori dei modelli legali sono:
+
+    o FARSTACK (Seleziona il modello dove SS non si trova in DGROUP).
+
+    o NEARSTACK (Seleziona il modello standard dove SS si trova in DGROUP.
+
+    I linguaggi legali sono: NOLANGUAGE, C, PASCAL, BASIC, FORTRAN,
+    e PROLOG.
+
+    I modificatori di linguaggi Ideal sono:
+
+    o NORMAL (Seleziona le sequenze di ingresso/uscita delle
+              procedure normali)
+
+    o WINDOWS (Seleziona le sequenze di ingresso/uscita della
+               procedura MSWindows)
+
+  Non occorre l'istruzione .MODEL per usare uno qualsiasi di
+  questi specificatori di linguaggi; l'istruzione .MODEL serve
+  semplicemente per impostare il linguaggio standard.
+
+
+           --Nuovi identificatori di MODEL: WINDOWS--
+
+  Ecco una descrizione del modificatore di modello SS_NE_DS e dei
+  modificatori di linguaggio NORMAL e WINDOWS.
+
+  Il modificatore di modello puï precedere qualsiasi uso di una
+  parola riservata del modello. Questo si verifica solo
+  nell'istruzione .MODEL. Ad esempio,
+      
+     .MODEL SS_NE_DS LARGE   ;Equivalente al modello large
+                              standard di TC
+      
+  Questo modificatore fa sç che SS sia NOTHING e che lo stack, se esiste,
+  non faccia parte di DGROUP.
+
+  I modificatori di linguaggio possono precedere qualsiasi uso di
+  una parola riservata di linguaggio. Una parola riservata di
+  linguaggio puï essere usata in ognuna delle seguenti istruzioni:
+  .MODEL, EXTRN, GLOBAL, PUBLIC, PUBLICDLL, COMM, PROC, CALL.
+
+  Un modificatore di linguaggio riguarda il tipo di frame dello
+  stack che viene generato per l'ingresso e l'uscita di procedure.
+  Quando un modificatore di linguaggio viene usato in EXTRN,
+  GLOBAL, PUBLIC, PUBLICDLL, COMM, e CALL, esso ä consentito ma
+  non avrÖ alcun effetto.
+
+  I frame dello stack generati al momento per ogni modificatore
+  sono i seguenti:
+      
+    NORMAL: ;Nessuna sequenza di ingresso/uscita generata senza
+            ;argomenti o variabili locali.
+            ;Versione 8086 (la versione 186 usa ENTER/LEAVE).
+            push bp
+            mov bp,sp
+            sub sp,local_size       ;se ci sono variabili locali.
+            <push usa i registri>
+            ...
+            <pop usa i registri>
+            mov sp,bp               ;se ci sono variabili locali.
+            pop bp
+            ret
+
+  WINDOWS: push ds
+           pop ax
+           xchg ax,ax
+           inc bp
+           push bp
+           mov bp,sp
+           push ds
+           mov ds,ax
+           sub sp,local_size       ;se ci sono variabili locali.
+           <push usa i registri>
+           ...
+           <pop usa i registri>
+           sub bp,2                ;se ve ne sono locali.
+           mov sp,bp               ;se ve ne sono locali.
+           pop ds
+           pop bp
+           dec bp
+           ret
+
+  Ecco un esempio:
+
+    .MODEL large,windows pascal
+    .code
+
+    foo proc
+    arg abc:word,def:word
+            xor ax,ax       ;Genera sequenze FAR WINDOWS PASCAL.
+            ret
+    endp
+
+    foo proc normal c
+    arg ghi:word,jkl:word
+            xor ax,ax       ;Genera sequenze FAR NORMAL C.
+            ret
+    endp
+
+
+                           --Segmenti VIRTUAL--
+
+
+  Una nuova parola riservata VIRTUAL ä stata aggiunta
+  all'istruzione SEGMENT. VIRTUAL definisce un tipo speciale di
+  segmento che verrÖ trattato come un'area comune e attaccato ad
+  un altro segmento durante il collegamento.
+
+    <nomeseg> SEGMENT VIRTUAL   ;In modalitÖ MASM.
+    ...
+    ENDS
+
+    SEGMENT <nomeseg> VIRTUAL   ;In modalitÖ Ideal.
+    ...
+    ENDS
+
+  In TASM, si suppone che il segmento VIRTUAL venga attaccato al
+  segmento in cui ä racchiuso. Anche il segmento VIRTUAL eredita i suoi
+  attributi dal segmento in cui ä racchiuso.
+
+  Un segmento VIRTUAL viene trattato come un segmento normale ma viene
+  considerato parte del segmento avo allo scopo di mantenere le stesse
+  direttive ASSUME.
+
+  Il linker tratta i segmenti virtuali come un'area comune che
+  verrÖ combinata nei moduli. Questo permette ai dati statici che
+  si trovano in molti moduli di essere condivisi dai file di
+  inclusione.
+
+
+                  --CompatibilitÖ con QASM--
+
+  TASM 2.0 dispone di direttive nuove e modificate per ricevere il codice
+  sorgente di QASM:
+
+  .STARTUP e STARTUPCODE
+     Questi comandi generano infatti il codice di avviamento del
+     modello particolare corrente. Questi inoltre definiscono
+     l'etichetta near @@Startup e fanno sç che l'istruzione END
+     alla fine del modulo generi l'equivalente di 'END @@Startup'.
+     Si noti che solo la direttiva 'STARTUPCODE' ä disponibile in
+     modalitÖ Ideal.
+
+  .MODEL e MODEL
+     Ora ä possibile selezionare un terzo campo nell'istruzione
+     .MODEL per specificare l'associazione dello stack a DGROUP:
+     NEARSTACK o FARSTACK. Ad esempio, .MODEL SMALL,C,FARSTACK
+     specificherÖ che lo stack non verrÖ incluso in DGROUP. Questa
+     capacitÖ ä giÖ fornita in TASM attraverso i modificatori di
+     linguaggio dello stesso nome. Il campo addizionale viene
+     fornito solo per compatibilitÖ con MASM.
+
+  Sono state aggiunte due nuove variabili predefinite:
+
+    Startup: definita dalle direttive .STARTUP e STARTUPCODE.
+
+    @Model: un intero che rappresenta il modello corrente.
+            0 = TINY   1 = SMALL    2 = COMPACT    3 = MEDIUM
+            4 = LARGE  5 = HUGE
+
+
+                        --Gestione istruzioni del 486--
+
+Le direttive seguenti sono state aggiunte a TASM 2.0 per ricevere
+il microprocessore 486 dell'Intel:
+
+.486,.486c (Solo modalitÖ Masm)
+
+P486N: attiva l'assemblaggio delle istruzione non protette del
+processore 486.
+
+.486p (Solo modalitÖ Masm)
+
+P486: attiva l'assemblaggio delle istruzioni protette del
+processore 486.
+
+BSWAP <registro a 32 bit>: istruzione di trasferimento byte al
+                           486.
+XADD <r/m>,<reg>: istruzione di scambio e di addizione del 486.
+CMPXCHG <r/m>,<reg>: istruzione di comparazione e di scambio del
+                     486.
+INVD: istruzione del 486 per l'invalidazione dei dati in cache.
+WBINVD: istruzione di gestione di cache della riscrittura e dei
+        dati non validi del 486.
+INVLPG <memptr>: istruzione di indirizzo per l'ingresso di TLB
+                 non valido del 486
+
+Sono stati aggiunti i seguenti registri di testo:
+
+TR3,TR4,TR5
+
+
+              --Nuovi messaggi di errore di TASM 2.0--
+
+  TASM 2.0 riporta molti nuovi messaggi di errore:
+
+  Global type doesn't match symbol type
+    Questo avvertimento viene dato quando un simbolo usa
+    l'istruzione GLOBAL ed ä anche definito nello stesso modulo,
+    ma il tipo specificato nel tipo GLOBAL e attuale del simbolo
+    non concorda.
+
+  Illegal segment address
+    Questo errore compare se viene specificato un indirizzo
+    maggiore di 65,535 come indirizzo del segmento della costante;
+    ad esempio,
+    
+      FOO SEGMENTO AT 12345h
+
+  Module is pass-dependent--compatibility pass was done.
+    Questo avvertimento compare se si ä incontrata una costruzione
+    dipendente di passaggio ed ä stata specificata l'opzione /m della
+    riga di comando. Si ä fatto un passaggio compatibile con MASM.
+
+  Near jump or call to different CS
+    Questo errore si verifica se l'utente cerca di eseguire una
+    NEAR CALL o JMP in un simbolo che ä definito in un'area in
+    cui CS viene assunto in un segmento diverso.
+
+  Only one startup sequence allowed
+    Questo errore compare se si ha pió di un'istruzione .STARTUP
+    o STARTUPCODE in un modulo.
+
+  Smart code generation must be enabled
+    Alcune caratteristiche speciali di generazione di codice
+    richiedono che la generazione del codice SMART sia attivata.
+    Queste includono PUSH di un puntatore, POP di un puntatore, e
+    PUSH di una costante (solo 8086).
+
+  Text macro expansion exceeds maximum line length
+    Questo errore si verifica quando l'espansione di una macro di
+    testo fa sç che la lunghezza massima consentita della riga sia
+    superata.
+
+  USES has no effect without language
+    Questo avvertimento appare se si specifica un'istruzione USES
+    quando non ä selezionato alcun linguaggio.
+
+
+                             --Tipo CODEPTR--
+
+  CODEPTR restituisce la dimensione dell'indirizzo della procedura
+  standard a seconda del modello corrente (WORD per i modelli con
+  codice NEAR; DWORD per i modelli con codice FAR). CODEPTR puï
+  essere usato ovunque venga usato DATAPTR. Ecco la sua sintassi:
+
+    Espressione CODEPTR
+
+
+                          --Istruzione RETCODE--
+
+  L'istruzione RETCODE ä esattamente equivalente a RETN o a RETF,
+  a seconda del modello specificato. La sintassi di RETCODE ä la
+  seguente:
+
+    RETCODE {<espressione>}
+
+  RETCODE non ä disponibile sia in MASM che in modalitÖ Ideal.
+
+
+                        --Direttive SMART/NOSMART--
+
+  Le direttive SMART/NOSMART controllano la generazione del codice
+  oggetto ottimizzato. Queste sono le aree che le direttive SMART
+  e NOSMART applicano a:
+
+    1) OR, AND, o XOR di un byte immediato signed
+    2) PUSH <costante>
+    3) PUSH <puntatore large>
+       POP <puntatore large>
+    4) CALL <indirizzo far nello stesso segmento>
+    5) JMP <indirizzo far nello stesso segmento>
+    6) LEA <indirizzo effettivo della costante>
+
+  La condizione predefinita ä SMART attivata. Quando SMART ä
+  attivata, un salto qualificante FAR verrÖ sostituito da uno NEAR
+  o da uno SHORT. Inoltre, quando SMART ä attivata, una chiamata
+  qualificante FAR verrÖ sostituita da un'istruzione PUSH CS e da
+  una chiamata NEAR. 
+
+  Quando viene selezionata NOSMART, si verificano le seguenti
+  modifiche di generazione di codice:
+ 
+    a) AND, OR, XOR di un valore word immediato non vengono pió
+       fatte usando la versione di byte immediata estesa e signed
+       di queste istruzioni dove ä possibile, ma piuttosto usando
+       la versione immediata di word pió lunga usata da MASM.
+ 
+    b) PUSH di un valore di costante sul processore 8086 usando
+       la sequenza speciale di codice di 10 byte (che conserva
+       tutti i registri e i flag) non ä consentita.
+ 
+    c) PUSH e POP di una variabile di memoria DWORD (o variabile
+       PWORD su un 386) non sono consentite.
+ 
+    d) JMP e CALL far all'interno dello stesso segmento non sono
+       pió ottimizzate sostituendo JMP o CALL FAR con la versione
+       NEAR.
+
+    e) Le istruzioni LEA che si riferiscono ad un indirizzo
+       effettivo di costante non verranno pió convertite nelle
+       equivalenti operazioni MOV.
+
+  Per una compatibilitÖ massima di MASM, occorre selezionare
+  NOSMART e QUIRKS.
+
+                     --Codice oggetto degli overlay--
+
+  L'opzione /o della riga di comando
+
+  Funzione   Genera il codice degli overlay
+
+  Sintassi     {/o}
+
+  Osservazioni     Turbo Assembler 2.0 controlla gli overlay.
+                   Specificando l'opzione /o sulla riga di comando
+                   si fa in modo che vengano generati gli aggiustamenti
+                   compatibili degli overlay. Quando viene usata
+                   questa opzione, i riferimenti di 386 ai segmenti
+                   di tipo USE32 non dovrebbero essere fatti poichÇ non
+                   si collegheranno in modo corretto.
+

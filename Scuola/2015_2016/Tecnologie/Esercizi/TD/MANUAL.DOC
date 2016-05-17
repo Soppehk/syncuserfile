@@ -1,0 +1,1514 @@
+
+                        TURBO DEBUGGER 2.0
+                     DOCUMENTAZIONE AGGIUNTIVA
+                    ===========================
+
+Questo file contiene le informazioni riguardanti i programmi di
+servizio di Turbo Debugger. Il contenuto di questo file ä il
+seguente:
+
+1.   I programmi di servizio di Turbo Debugger
+2.   L'interfacciamento del debugger hardware
+
+
+1. I PROGRAMMI DI SERVIZIO DI TURBO DEBUGGER
+============================================
+
+Per convenienza, quando si ä alla ricerca di informazioni che
+riguardano un programma di servizio particolare, si puï ricercare
+il nome del programma di servizio seguito dai due punti (ad
+esempio, TDUMP:). In questo modo si andrÖ direttamente
+all'intestazione del programma di servizio specificato.
+
+Il pacchetto di Turbo Debugger ä fornito di diversi programmi di
+servizio che verranno trattati nelle sezioni seguenti. Un
+programma di servizio consente di eseguire il debugging di
+programmi in C compilati con i compilatori della Microsoft. Si
+tratta del programma di conversione da Codeview a Turbo Debugger,
+TDCONVRT.EXE.
+
+Un altro programma di servizio funziona con il debugging remoto e
+consente di inviare dei semplici comandi di gestione dei file ad
+un sistema remoto. Si tratta del programma di servizio Remote
+File Transfer, TDRF.EXE.
+
+Un terzo programma consente di eliminare le informazioni di
+debugging (la "tabella dei simboli") dai programmi senza doverli
+ricollegare. Si tratta del programma di servizio "Symbol Table
+Stripping", TDSTRIP.EXE.
+
+Esiste anche un programma di servizio che consente di comprimere
+le informazioni di debugging ed uno che consente di accodarle dal
+file .MAP: TDPACK.EXE e TDMAP.EXE.
+
+Infine, viene fornito un disassemblatore di moduli oggetti chiamato
+TDUMP.EXE.
+
+Inoltre, viene proposto un piccolo programma residente, TDNMI.COM
+che ripristina i parametri di controllo se si sta usando una scheda
+Periscope I.
+
+   Nota:  Per una lista di tutte le opzioni della riga di comando
+          a disposizione di TDCONVRT.EXE, TDRF.EXE, TDSTRIP.EXE,
+          TDPACK.EXE, TDMAP.EXE, e di TDUMP.EXE, ä sufficiente
+          digitare il nome del programma e premere Invio. Ad
+          esempio, per consultare le opzioni della riga di
+          comando di TDMAP.EXE, basta immettere:
+
+               TDMAP
+
+          Tutti gli altri programmi utilizzano l'opzione -? della
+          riga di comando per le informazione interattive.
+
+
+TDCONVRT: Il convertitore della tabella dei simboli di CodeView
+---------------------------------------------------------------
+
+Il programma di servizio TDCONVRT.EXE converte il programma in C
+collegato con Microsoft Link in un formato adatto per utilizzare
+il Turbo Debugger. Prima di usare questo programma di servizio,
+occorre preparare il programma per il debugging esattamente come
+se si stesse per usare CodeView.
+
+Esecuzione dal DOS
+-------------------
+
+Dopo aver compilato e collegato il programma, occorre convertirlo
+nel formato di Turbo Debugger digitando sulla riga di comando del
+DOS:
+
+TDCONVRT nomevecchio [nomenuovo]
+
+dove nomevecchio ä il nome del programma eseguibile creato con
+Microsoft Link. Si puï specificare un nuovo nome per il programma
+eseguibile di Turbo Debugger fornendo quel nome dopo il nome
+vecchio. Se non si specifica il nome nuovo, il file con il nome
+vecchio viene convertito nel formato di Turbo Debugger.
+
+Il programma di servizio scopre automaticamente se il programma ä
+nel formato di CodeView (versione 1 o 2) e regola il suo comportamento
+di conseguenza.
+
+Messaggi di errore
+-------------------
+
+Il programma di conversione qualche volta incontra un problema
+che gli impedisce di convertire il programma nel formato di
+Turbo Debugger. Se accade questo, si vedrÖ uno dei seguenti
+messaggi di errore:
+
+Can't convert CodeView version 1 symbol tables
+Si ä cercato di convertire un programma che ha una tabella di
+simboli che puï essere usata solo con la versione 1 di CodeView.
+Occorre ricompilare e collegare il programma con una versione
+pió recente di strumenti della Microsoft che generi delle tabelle
+di simboli di versione 2 di CodeView.
+
+Can't create file: ___
+TDCONVRT non ha potuto creare il file indicato. Probabilmente non
+si ha spazio sufficiente sul disco. Si cancellino i file che non
+occorrono e si riprovi.
+
+Can't translate a packed symbol table
+Si sta cercando di convertire una tabella di simboli che ä stata
+elaborata dal programma di servizio CVPACK. TDCONVRT puï
+solamente funzionare sulle tabelle di simboli che non sono state
+impaccate. Si dovrÖ ricollegare il programma e non eseguire il
+programma di servizio, e quindi usare TDCONVRT.
+
+Error reading from file: ___
+Si ä verificato un errore mentre si leggeva dal file indicato.
+Questo di solito significa che il file ä stato scritto su un
+settore del disco rovinato. Si cerchi di ricollegare il programma
+che si desidera convertire in modo che venga riscritto sul disco.
+
+Error writing to file: ___
+Si ä verificato un errore mentre si scriveva nel file indicato.
+Questo di solito significa che il disco ä pieno. Si dovranno
+cancellare un po' di file e quindi eseguire nuovamente la conversione.
+
+File not found: ___
+TCONVRT non ä riuscito a trovare il file che si sta cercando di
+convertire. Se non si dÖ un'estensione al nome del file che si vuole
+convertire, TDCONVRT presuppone che sia .EXE.
+
+Not enough memory to perform conversion
+TDCONVRT ha esaurito la memoria mentre stava traducendo la
+tabella dei simboli nel formato di Turbo Debugger. Si puï cercare
+di scaricare qualsiasi programma di servizio residente caricato in
+precedenza e riprovare la conversione. Se ancora non si dispone
+della memoria sufficiente, si cerchi di ridurre la quantitÖ delle
+informazioni di debugging del programma. Si faccia questo
+compilando o assemblando solo alcuni dei moduli che includono le
+informazioni di debugging.
+
+Program does not have a valid symbol table
+Si ä cercato di convertire un programma che non dispone di una
+tabella di simboli creata da MS-LINK. TDCONVRT ä in grado di
+convertire solo le tabelle di simboli create da MS-LINK.
+
+Symbol table contains untranslatable fields
+Il programma che si sta cercando di convertire presenta una
+tabella di simboli che contiene campi che TDCONVRT non ä in grado
+di tradurre. TDCONVRT funziona con tutti i programmi in C della
+Microsoft, ma potrebbe non riconoscere completamente gli altri
+linguaggi della Microsoft.
+
+Symbol table has invalid format
+La tabella di simboli del programma non ä formattata
+correttamente. Potrebbe essersi guastata oppure essere stata
+generata da una vecchia versione di MS-LINK. Occorre accertarsi
+di usare la versione pió recente di MS-LINK e quindi cercare di
+ricollegare per creare un nuovo file .EXE e la tablla di simboli
+sul disco.
+
+TDRF:/TDREMOTE: I Programmi di servizio per il trasferimento remoto
+                di file e per il debugging
+--------------------------------------------------------------------
+
+Il programma di servizio di trasferimento remoto di file (TDRF)
+funziona in congiunzione con TDREMOTE che viene eseguito su un
+altro sistema. Con TDRF ä possibile eseguire la maggior parte
+delle operazioni di aggiornamento di file del DOS sul sistema
+remoto. Si possono:
+
+* copiare i file nel sistema remoto
+
+* copiare i file dal sistema remoto
+
+* creare le directory
+
+* rimuovere le directory
+
+* visualizzare le directory
+
+* cambiare le directory
+
+* rinominare i file
+
+* cancellare i file
+
+Una volta che si ä avviato TDREMOTE sul sistema remoto, si puï
+utilizzare TDRF in qualsiasi momento. Si puï avviarlo direttamente
+sulla riga di comando del DOS, o accedere al DOS dall'interno di
+Turbo Debugger utilizzando il comando File/DOS Shell e quindi avviare
+TDRF anche mentre si sta eseguendo il debugging di un programma sul
+sistema remoto. Questo puï essere utile se si ä dimenticato di inserire
+alcuni file che sono richiesti dal programma sottoposto a debugging nel
+sistema remoto.
+
+Quando TDRF viene descritto nelle sezioni seguenti, ci si riferisce
+al sistema in cui si sta digitando come "sistema locale" e ai file che
+vi si trovano come "file locali". Inoltre, ci si riferisce all'altro
+sistema collegato da un cavo come "sistema remoto" e ai file che vi si
+trovano come "file remoti".
+
+Avviamento di TDRF sulla riga di comando del DOS
+-------------------------------------------------
+
+La forma generale della riga di comando di TDRF ä:
+
+     TDRF  [opzioni]  comando  [argomenti]
+
+Le opzioni controllano la velocitÖ del collegamento remoto e su
+quale porta viene eseguita. Esse Verranno descritte pió dettagliatamente
+nella sessione successiva.
+
+Comando indica l'operazione che si desidera eseguire. Il comando
+puï sia essere digitato come si ä abituati a farlo con il DOS,
+come COPY, DEL, MD e cosç via, sia essere l'abbreviazione di una
+singola lettera.
+
+Ad esempio, per visualizzare una directory di tutti i file che
+iniziano con ABC nella directory corrente sul sistema remoto, si
+potrebbe digitare:
+
+     TDRF DIR ABC*
+
+Tutti i comandi vengono descritti interamente dopo la sezione
+successiva.
+
+Le opzioni della riga di comando TDRF
+--------------------------------------
+
+Occorre iniziare un'opzione o un trattino (-) o con uno slash
+(/). Ecco tutte le opzioni della riga di comando di TDRF:
+
+-rsN     Imposta la velocitÖ di collegamento remoto.
+
+L'opzione -rs imposta la velocitÖ alla quale opera il collegamento.
+Occorre assicurarsi di usare la stessa velocitÖ che si ä specificata
+quando si ä avviato TDREMOTE sul sistema remoto con TDRF. N puï essere
+1, 2, o 3, dove 1 significa una velocitÖ di 9600 baud, 2 significa
+una velocitÖ di 40.000 baud, e 3 significa una velocitÖ di 115.000 baud.
+
+In altre parole, pió alto ä il numero, pió velocemente i dati
+trasferiscono il rapporto nel collegamento. Di solito, TDRF
+assume come valore standard -rs3 (la velocitÖ pió alta).
+
+-rpN      Imposta la porta di collegamento remoto.
+
+L'opzione -rp specifica quale porta utilizzare per il
+collegamento remoto. N puï essere sia 1 che 2, dove 1 sta per
+COM1 e 2 sta per COM2.
+
+-w         Scrive le opzioni nel file del programma eseguibile.
+
+Le opzioni della riga di comando di TDRF possono essere rese
+permanenti riscrivendole nell'immagine sul disco del programma
+eseguibile TDRF. Si faccia questo specificando l'opzione della
+riga di comando -w insieme alle altre opzioni che si desiderano
+rendere permanenti. In seguito verrÖ richiesto di introdurre il
+nome del programma eseguibile.
+
+Se si sta eseguendo su una versione 3.0 del DOS o successive, la
+richiesta indicherÖ il percorso e il nome del file che ä stato
+eseguito da TDRF. Si puï accettare questo nome premendo Invio, o
+introducendo il nome di un nuovo file eseguibile. Il nuovo nome
+deve giÖ esistere ed essere una copia del programma TDRF che si ä
+giÖ eseguito.
+
+Se si sta eseguendo su una versione 2.x del DOS, si dovrÖ indicare
+l'intero percorso e il nome del file del programma eseguibile.
+
+Si puï introdurre il nome di un nuovo file eseguibile che non
+esista giÖ. TDRF creerÖ il nuovo file eseguibile.
+
+Ecco i nomi dei comandi che si possono utilizzare con il programma
+TDRF. I metacaratteri * e ? possono essere usati con i seguenti comandi
+COPY, COPYFROM, DEL, e DIR:
+
+COPY
+Copia i file dal sistema locale nel sistema remoto. Si puï anche
+digitare COPYTO invece di COPY. L'abbreviazione della singola
+lettera di questo comando ä T.
+
+Se si indica un solo nome di file dopo il comando COPY, quel nome
+di file verrÖ copiato nella directory corrente del sistema remoto.
+Se si indica un secondo nome di file dopo il nome del file del
+sistema locale, il file locale verrÖ copiato in quella destinazione
+del sistema remoto. Si puï specificare o un nuovo nome di file, o il
+nome di una directory, o il nome di un'unitÖ del sistema remoto.
+Ad esempio,
+
+           TDRF COPY TEST1 \MIADIR
+
+copia il file TEST1 dal sistema locale nel file MIADIR\TEST1 del
+sistema remoto.
+
+COPYFROM
+Copia i file dal sistema remoto nel sistema locale.
+L'abbreviazione della singola lettera di questo comando ä F.
+
+Se si indica un unico nome di file dopo il comando COPYFROM,
+quel nome di file verrÖ copiato dalla directory corrente del sistema
+remoto nella directory corrente del sistema locale. Se si indica
+un secondo nome di file dopo il nome del file del sistema remoto,
+il file remoto verrÖ copiato nella destinazione del sistema
+locale. Si puï specificare o un nuovo nome di file, o il nome di
+una directory, o il nome di un'unitÖ del sistema locale. Ad esempio,
+
+             TDRF COPYFROM MIOFILE ..
+
+copia il file MIOFILE dal sistema remoto nella directory madre
+della directory corrente del sistema locale.
+
+             TDRF F TC*.* A:\TCDEMO
+
+copia tutti i file che iniziano con TC nella directory corrente
+del sistema remoto nella sottodirectory dell'unitÖ A del sistema
+locale, TCDEMO.
+
+DEL
+Cancella un unico file dal sistema remoto. L'abbreviazione della
+singola lettera di questo comando ä E.
+
+Se si indica solo il nome di un file senza directory o unitÖ, il
+file viene cancellato dalla directory corrente del sistema remoto.
+Ad esempio,
+
+            TDRF DEL \XYZ
+
+cancella il file XYZ dalla directory radice (root) del sistema
+remoto.
+
+DIR
+Visualizza una lista dei file di una directory del sistema
+remoto. L'abbreviazione della singola lettera di questo comando ä
+D.
+
+Questo comando si comporta in modo simile all'equivalente comando
+del DOS. Se non si specificano i metacaratteri, mostra tutti i file
+della directory; se si specificano i metacaratteri, solo quei file
+saranno elencati. Si puï interrompere la visualizzazione della
+directory in qualsiasi momento premendo Ctrl-Break.
+
+La lista della directory viene visualizzata esattamente nello
+stesso formato usato dal comando DIR del DOS. Ad esempio,
+
+             TDRF DIR \SYS\*.SYS
+
+risulta visualizzato nel modo seguente:
+
+Directory of C:\SYS
+
+.                <DIR>           6-08-88      8:01a
+..               <DIR>           6-08-88      8:01a
+ANSI    SYS             1678     3-17-87      12:00a
+VDISK   SYS             3455     3-17-87      12:00a
+
+REN
+Rinomina un unico file del sistema remoto. L'abbreviazione della
+singola lettera di questo comando ä R.
+
+Con questo comando si devono indicare due nomi di file: il nome
+del file originale e il nome del nuovo file. Il nuovo nome puï
+specificare una directory diversa come parte del nome, ma non
+un'unitÖ diversa. Ad esempio,
+
+         TDRF REN TEST1 \TEST2
+
+rinomina il file TEST1 nella directory corrente in TEST2 nella
+directory radice del sistema remoto. Questo comando effettivamente
+"sposta" il file da una directory all'altra e puï essere usato anche
+per rinominare semplicemente un file all'interno di una directory,
+senza spostarlo in un'altra directory.
+
+MD
+Crea una nuova directory nel sistema remoto. L'abbreviazione
+della singola lettera di questo comando ä M.
+
+Si deve indicare il nome della directory che deve essere creata.
+Se non si indica un percorso della directory come parte del nuovo
+nome della directory, la nuova directory verrÖ creata nella
+directory corrente del sistema remoto. Ad esempio,
+
+          TDRF Md TEST
+
+crea una directory chiamata TEST nella directory corrente del
+sistema remoto.
+
+RD
+Cancella una directory esistente del sistema remoto.
+L'abbreviazione della singola lettera di questo comando ä K.
+
+Si deve indicare il nome della directory che deve essere
+cancellata. Se non si indica un percorso della directory come
+parte del nuovo nome della directory, la directory verrÖ
+cancellata dalla directory corrente del sistema remoto. Ad
+esempio,
+
+           TDRF RD MIADIR
+
+cancella una directory chiamata MIADIR dalla directory corrente
+del sistema remoto.
+
+CD
+Cambia in una nuova directory del sistema remoto. L'abbreviazione
+della singola lettera di questo comando ä C.
+
+Si deve indicare il nome della directory da cambiare. Si puï anche
+indicare una nuova unitÖ da cambiare, o una nuova unitÖ e una
+directory insieme. Ad esempio,
+
+            TDRF CD a:ABC
+
+rende corrente il drive A del sistema remoto, e passa anche alla
+directory ABC.
+
+I messaggi di TDRF
+-------------------
+
+Ecco una lista dei messaggi che si potrebbero incontrare quando si
+lavora con TDRF:
+
+Can't create file on local system: ___
+Si stava copiando un file dal sistema remoto che utilizzava il
+comando COPYFROM, e non si ä potuto creare il file del sistema
+locale. Questo si verificherÖ se il disco del sistema locale ä
+pieno, oppure se il nome del file del sistema remoto ä lo stesso
+del nome della directory del sistema locale.
+
+Can't modify exe file
+Il file specificato non ä una valida copia del programma di servizio
+TDRF. Per modificare una copia del programma di servizio TDRF si puï
+usare solo l'opzione -w.
+
+Can't open exe file to modify
+Non si ä potuto aprire il file specificato. Probabilmente si ä introdotto
+un nome di file non valido o che non esiste.
+
+Error opening file: ___
+Non si ä potuto aprire il file che si voleva trasferire al sistema
+remoto. Probabilmente si ä specificato il nome di un file che non
+esiste o non valido.
+
+Error writing file: ___
+Si ä verificato un errore mentre si scriveva in un file sul
+sistema locale. Questo di solito accade quando non vi ä pió
+spazio sul disco. Si dovranno cancellare alcuni file per creare
+spazio per il file che si desidera copiare dal sistema remoto.
+
+Error writing file ___ on remote system
+Si ä verificato un errore mentre si scriveva un file sul disco
+del sistema remoto. Questo di solito accade se il disco remoto ä
+pieno. Si dovranno cancellare alcuni file per creare spazio per
+il file che si vuole trasferire.
+
+File name is a directory on remote
+Si ä cercato di copiare un file dal menu locale nel sistema
+remoto, ma il nome del file locale esiste come directory del
+sistema remoto. OccorrerÖ rinominare il file indicando un secondo
+argomento per il comando COPY.
+
+Interrupted
+Si ä premuto Ctrl-Break mentre si aspettava che la comunicazione
+con il sistema remoto venisse stabilita.
+
+Invalid command: ___
+Si ä introdotto un comando che TDRF non riconosce. Per ogni
+comando, si puï usare la parola di comando o l'abbreviazione
+della singola lettera del DOS.
+
+Invalid command line option: ___
+Quando si ä avviato TDRF sulla riga di comando del DOS si ä
+indicata un'opzione della riga di comando non valida.
+
+Invalid destination disk drive
+Nel comando si ä specificata una lettera dell'unitÖ non esiste. Si
+ricordi che il sistema remoto potrebbe avere un numero diverso di
+unitÖ rispetto al sistema locale.
+
+No matching files on remote
+Si ä indicato un comando di directory ma, o nella directory del
+sistema remoto non ci sono file, o nessun file corrisponde alla
+specifica del metacarattere che ä stato indicato come argomento
+al comando DIR.
+
+No remote command specified
+Non si ä specificato alcun comando sulla riga di comando DOS;
+TDRF non puï far niente.
+
+Too few arguments
+Non si sono indicati abbastanza argomenti per il comando
+richiesto. Alcuni comandi richiedono un argomento, come DEL, MD,
+CD, RD e cosç via.
+
+Too many arguments
+Si sono specificati troppi argomenti per il comando richiesto.
+Nessun comando richiede pió di due argomenti, e alcuni ne
+richiedono soltanto uno.
+
+Wrong version of TDREMOTE
+Si sta utilizzando una versione del TDRF e del TDREMOTE non
+compatibile. Ci si accerti di usare la versione pió recente
+di ogni programma di servizio.
+
+TDSTRIP: Il programma che elimina la tabella dei simboli
+----------------------------------------------------------
+
+TDSTRIP.EXE, il programma di servizio che elimina la tabella dei
+simboli, consente di rimuovere la tabella dei simboli da un
+programma eseguibile generato da TLINK con l'opzione /v. Questo
+modo ä pió veloce del ricollegamento senza l'opzione /v. Puï anche
+rimuovere le informazioni di debugging da un file .OBJ. Basta
+introdurre:
+
+       TDSTRIP POGRAM.OBJ
+
+Questo programma di servizio puï essere utilizzato anche per
+rimuovere la tabella dei simboli e introdurla in un file
+separato. Questo ä utile quando si vuole convertire il programma
+di formato .EXE in un file .COM, e matenere ancora la tabella dei
+simboli di debugging. Questo programma di servizio inserisce la
+tabella dei simboli in un file con estensione .TDS. Turbo
+Debugger cerca questo file quando carica un programma da
+sottoporre a debugging che non dispone di una tabella dei
+simboli.
+
+Le opzioni della riga di comando di TDSTRIP
+--------------------------------------------
+
+Ecco la forma generale della riga di comando del DOS usata
+per avviare il programma di servizio Symbol Table Stripping,
+TDSTRIP:
+
+        TDSTRIP [-s] [-c] nomeexe [nomeoutput]
+
+Se non si specifica l'opzione -s, la tabella dei simboli viene
+rimossa dal nomeexe del file .EXE. Se si specifica un nomeoutput,
+il file originale .EXE viene lasciato immutato e una versione
+senza tabella dei simboli viene creata come nomeoutput.
+
+Se si specifica l'opzione -s, la tabella dei simboli viene
+inserita in un file con lo stesso nome di nomeexe ma con
+l'estensione .TDS. Se si specifica un file di output, la tabella
+dei simboli viene inserita in nomeoutput.
+
+Se si specifica l'opzione -c, il file di input .EXE viene
+convertito in un file .COM. Se si utiliza -c in congiunzione con
+-s, ä possibile convertire un file .EXE con simboli, in un file
+.COM con Turbo Debugger che mantiene tutte le informazioni di
+debugging.
+
+Solo certi file .EXE possono essere convertiti in file .COM. Le
+stesse restrizioni si applicano all'opzione -c di TDSTRIP e
+all'opzione /t di TLINK: il programma deve iniziare nella
+posizione 100 esadecimali, e non puï contenere alcuna definizione
+di segmento.
+
+Se non si indica un'estensione con nomeexe, viene presupposto
+.EXE. Se non si indica un'estensione con con nomeoutput, verrÖ
+aggiunta l'estensione .EXE quando non si utilizza -s, e .TDS
+quando si utilizza -s.
+
+Di seguito alcuni esempi delle righe di comando di TDSTRIP:
+
+        TDSTRIP MIOPROG
+
+rimuove la tabella dei simboli da MIOPROG.EXE.
+
+        TDSTRIP -s MIOPROG.OLD
+
+rimuove la tabella dei simboli da MIOPROG.OLD e la inserisce in
+MIOPROG.TDS.
+
+        TDSTRIP MIOPROG MIOPROG.NEW
+
+lascia MIOPROG.EXE immutato ma crea un'altra copia di esso
+chiamata MIOPROG.NEW senza una tabella dei simboli.
+
+        TDSTRIP -s MIOPROG MIOSYMS
+
+rimuove la tabella dei simboli da MIOPROG.EXE e la inserisce in
+MIOSYMS.TDS.
+
+I messaggi di errore di TDSTRIP
+--------------------------------
+
+Ecco una lista relativa ai possibili errori di messaggio che si
+potrebbero incontrare quando si lavora con TDSTRIP:
+
+Can't create file: ___
+TDSTRIP non ha potuto creare il simbolo di output oppure il file
+.EXE. O non c'ä pió spazio sul disco, o si ä specificato il nome
+di un file di output non valido.
+
+Can't open file: ___
+TDSTRIP non ha potuto localizzare il file .EXE da cui si
+desiderava rimuovere la tabella dei simboli.
+
+Error reading from input exe file
+Si ä verificato un errore durante la lettura dal file di input
+del programma eseguibile. Il disco potrebbe essere illeggibile.
+Si riprovi l'operazione.
+
+Error writing to output file: ___; disk may be full
+TDSTRIP non ha potuto scrivere nel simbolo di output o nel file
+eseguibile. Questo di solito accade quando non c'e pió spazio sul
+disco. Si dovranno cancellare dei file per fare spazio al file
+creato da TDSTRIP.
+
+Input file is not an .exe file
+Si ä specificato il nome di un file di input che non ä un
+programma eseguibile valido. Si possono eliminare simboli solo
+dai programmi .EXE, poichÇ questi sono gli unici su cui TLINK puï
+inserire una tabella di simboli. I programmi con formato di file
+.COM non dispongono di tabelle di simboli e non possono essere
+elaborati da TDSTRIP.
+
+Invalid command-line option: ___
+Quando si ä avviato TDSTRIP dalla riga di comando del DOS si ä
+indicata un'opzione della riga di comando non valida.
+
+Invalid exe file format
+Il file di input sembra essere un file di programma con formato
+.EXE, ma qualcosa ä sbagliato per quanto lo riguarda. Si dovrebbe
+ricollegare il programma con TLINK.
+
+Not enough memory
+Il sistema non dispone di memoria libera sufficiente perchÇ
+TDSTRIP carichi ed elabori il file .EXE. Questo accade solo in
+circostanze estreme (TDSTRIP richiede una memoria molto modesta).
+Si dovrebbe probabilmente riattivare il sistema e riprovare.
+Precedentemente si puï aver eseguito un programma che allocava
+della memoria che non potrÖ essere liberata fino a quando non si
+riattiva il sistema.
+
+Program does not have a symbol table
+Si ä specificato un file di input che ä un file .EXE valido, ma
+che non dispone di una tabella di simboli.
+
+Program does not have a valid symbol table
+La tabella dei simboli alla fine del file .EXE non ä una tabella
+di simboli valida per TLINK. Questo puï accadere se si cerca di
+usare TDSTRIP su un programma creato da un linker diverso da
+TLINK.
+
+Too many arguments
+A TDSTRIP possono essere forniti al massimo due argomenti, il
+primo ä il nome del programma eseguibile, e il secondo ä il nome
+del file di output dei simboli o il programma eseguibile.
+
+You must supply an exe file name
+Si ä avviato TDSTRIP senza indicargli il nome di un file .EXE del
+programma di cui si desidera eliminare la tabella dei simboli.
+
+
+TDMAP: Il programma di accodamento del file .MAP
+--------------------------------------------------
+
+Il programma di servizio TDMAP prende un file .MAP --un file
+dell'ASCII creato dal linker contenente tutti i simboli PUBLIC
+di un programma-- e lo accoda al file .EXE nel formato di Turbo
+Debugger. Questo consente di eseguire il debugging di un
+programma eseguibile che si ä compilato con un compilatore ed un
+linker che non sono della Borland.
+
+La sintassi per l'uso di TDMAP ä:
+
+           TDMAP nomefile [/estensionesorgente]
+
+TDMAP legge il nomefile.MAP ed aggiunge le informazioni di
+debugging al nomefile.EXE. Ad esempio, se si vogliono accodare i
+record di debugging ad un programma chiamato HELLO.PAS, si
+potrebbe introdurre:
+
+           TDMAP hello /Epas
+
+Si noti che l'estensione, che ä preceduta da /E, ä facoltativa.
+
+TDPACK: Il programma di impaccamento del file
+-----------------------------------------------
+
+Il programma di servizio TDPACK conprime le informazioni di
+debugging che sono accodate ad un file .EXE, rendendo pió piccolo
+il file eseguibile. Esso fa questo eliminando le doppie informazioni
+come le stringhe o le informazioni relative al tipo di dati.
+
+La sintassi per l'uso di TDPACK ä:
+
+            TDPACK nomefile
+
+Se non viene specificata alcuna estensione, TDPACK presuppone che
+l'estensione sia .EXE. Se non riesce a trovare FILENAME.EXE,
+TDPACK cerca FILENAME.COM e FILENAME.TDS (un file .TDS contiene i
+simboli di Turbo Debugger da usare con un file .COM).
+
+TDUMP: Il programma di dumping
+-------------------------------
+
+Il programma di servizio TDUMP ä un disassemblatore di moduli
+generico che si puï utilizzare per esaminare la struttura di
+qualsiasi file.
+
+TDUMP cerca di frazionare in parti un file il pió intelligentemente
+possibile. Per fare questo, innanzitutto guarda l'estensione del file,
+e se la riconosce, visualizza i componenti del file secondo il tipo.
+TDUMP riconosce i file con estensione .EXE, .OBJ, e .LIB. Qualsiasi
+altro tipo di file risulta in un dump esadecimale puro del file.
+
+Si puï utilizzare TDUMP per dare un'occhiata alla struttura
+interna di qualsiasi file. Questo non solo mostra il contenuto
+del file, ma anche come viene creato. Inoltre, poichÇ TDUMP
+verifica che la struttura di un file corrisponde alla sua
+estensione, puï essere utilizzato per verificare la protezione
+del file.
+
+La sintassi di TDUMP
+---------------------
+
+La sintassi di TDUMP ä:
+
+             TDUMP [opzioni] fileinput [fileoutput]
+
+Fileinput ä il file di cui si vuole visualizzare la struttura (o
+"dump"). Fileoutput ä un nome di file facoltativo per inviare la
+visualizzazione (si puï anche utilizzare il comando standard di
+redirezione del DOS ">"). Opzioni sta per qualsiasi opzione di
+TDUMP trattata nella sezione successiva.
+
+Le opzioni della riga di comando di TDUMP
+------------------------------------------
+
+Con TDUMP si possono utilizzare diverse opzioni, che iniziano tutte
+con un trattino (oppure si puï usare uno slash). I due esempi
+seguenti si equivalgono:
+
+               TDUMP -el -v demo.exe
+
+               TDUMP /el /v demo.exe
+
+Le opzioni -a e -a7
+
+TDUMP regola automaticamente la sua visualizzazione dell'output a
+seconda del tipo di file (nella visualizzazione in esadecimali,
+esso mostra un tipo di file non riconosciuto). Tuttavia, si puï
+imporre la visualizzazione ASCII includendo l'opzione -a o -a7.
+
+Una visualizzazione del file in ASCII mostra l'offset e il
+contenuto in caratteri di possibile visualizzazione ASCII. Se un
+carattere non si puï visualizzare (come qualsiasi carattere di
+controllo), compare un punto.
+
+L'opzione -a7 funziona come -a, eccetto che converte qualsiasi
+carattere standard dell'ASCII superiore nell'equivalente carattere
+standard dell'ASCII inferiore. Questo ä comodo se il file di cui
+si sta eseguendo il dumping imposta i caratteri standard dell'ASCII
+superiore come flag (come fanno i file di WordStar).
+
+Le opzioni -e, -el, ed -er
+---------------------------
+
+Tutte e tre queste opzioni forzano TDUMP a visualizzare il
+file come se fosse un file eseguibile (.EXE).
+
+Una visualizzazione di file .EXE consiste in una serie di liste
+di statistiche di file nella parte superiore del video, seguite
+dalla tabella globale dei simboli e dalla tabella dei moduli.
+
+L'opzione -el funziona come l'opzione -e, eccetto che sopprime i
+numeri delle righe nella visualizzazione.
+
+L'opzione -er funziona come l'opzione -e, eccetto che impedisce
+la visualizzazione della tabella di redirezione.
+
+Si possono sopprimere sia i numeri delle righe che la tabella di
+redirezione utilizzando -elr come un'opzione.
+
+L'opzione -h
+-------------
+
+L'opzione -h forza TDUMP a visualizzare il file in formato
+esadecimale. Il formato esadecimale consiste in una colonna di
+numeri offset, colonne di numeri esadecimali, e quindi di
+equivalenti ASCII (con punti che compaiono dove vi sono dei
+caratteri standard ASCII che non ä possibile visualizzare).
+
+Se TDUMP non riconosce l'estensione del file di input, assume
+di norma la visualizzazione del file in formato esadecimale
+(a meno che un'opzione non lo forzi a mostrarlo in un altro formato).
+
+L'opzione -l
+-------------
+
+L'opzione -l forza TDUMP a visualizzare il file come se fosse
+un file di libreria (.LIB). Un file di libreria ä una raccolta di
+file oggetto (si rimanda alla sezione successiva per ulteriori
+informazioni relative ai file oggetto). Il dump di un file di
+libreria mostra innanzitutto delle informazioni specifiche
+relative alla libreria, quindi i file oggetto, e infine i record
+nei file oggetto.
+
+L'opzione -o
+-------------
+L'opzione -o forza TDUMP a visualizzare il file come se fosse
+un file oggetto (.OBJ). Un file oggetto contiene le descrizioni dei
+record dei comandi che trasferiscono i comandi e i dati al linker,
+dandogli le indicazioni su come creare un file .EXE. Il formato di
+visualizzazione mostra i record e i dati relativi, su una base record
+per record.
+
+L'opzione -v
+-------------
+
+L'opzione -v riguarda tutti i formati dei file in modo uguale,
+sopprimendo qualsiasi descrizione che TDUMP inserisce in modo
+ordinario nel dump per migliorare la leggibilitÖ. Se si utilizza
+l'opzione -v, la visualizzazione ä un dump letterale dei
+componenti dei file --il pió conciso possibile. Occorre essere un
+programmatore esperto per interpretare una visualizzazione
+letterale.
+
+
+TDNMI: Il programma di servizio per ripristinare il parametro di controllo
+---------------------------------------------------------------------------
+
+Gli utenti di Periscope: possono utilizzare TDNMI se dispongono
+di una scheda Periscope I e vogliono utilizzare il suo parametro di
+controllo con Turbo Debugger. TDNMI ä un piccolo programma residente
+(TSR) che ripristina periodicamente il parametro di controllo della
+scheda Periscope. Si puï utilizzare l'opzione /p della riga di comando
+per impostare l'indirizzo di base della scheda se ä diverso
+dall'indirizzo standard di 300.
+
+Se si sta usando un PC clone che disattiva l'interrupt di NMI
+(come alcuni PC), si puï installare il programma residente TDNMI
+per cancellare l'NMI (Interrupt Non Mascherabile) ogni mezzo secondo.
+OccorrerÖ fare questo se si sta utilizzando un parametro di controllo
+su un sistema simile.
+
+Per una lista di tutte le opzioni della riga di comando a
+disposizione di TDINST.EXE, TDREMOTE.EXE, INSTALL.EXE, e
+TDNMI.COM, si introduca il nome del programma seguito da -h:
+
+        TDNMI -h
+
+TDMEM: Il programma che indica la disponibilitÖ di memoria
+------------------------------------------------------------
+
+TDMEM visualizza la disponibilitÖ corrente di che comprende
+la memoria espansa o estesa, se esiste, e la memoria convenzionale.
+Questo programma puï essere utile quando si sta eseguendo il
+debugging di programmi residenti (TSR) e di driver di dispositivo.
+Si puï utilizzare l'opzione File/Table relocate in Turbo Debugger
+per specificare l'indirizzo di base del segmento della tabella dei
+simboli corrente che viene mostrata quando si esegue TDMEM.
+
+TDDEV: Il programma di visualizzazione del driver di dispositivo
+------------------------------------------------------------------
+
+TDDEV genera un rapporto che mostra i driver di dispositivo
+caricati nel sistema, quanta memoria utilizzano, e quali vettori
+degli interrupt vengono rilevati. Questo programma ä utile anche
+quando si sta eseguendo il debugging di programmi applicativi di
+driver di dispositivo.
+
+2. L'INTERFACCIAMENTO DEL DEBUGGER HARDWARE
+=============================================
+
+Le schede relative al debugging hardware accelerano notevolmente
+alcuni tipi di punti di arresto; in particolare, quelli che
+controllano un'area di memoria o una variabile di programma da
+cambiare. Turbo Debugger ha un'interfacciamento per accedere a queste
+schede.
+
+Questa appendice descrive come installare il driver di
+dispositivo fornito con Turbo Debugger e come scrivere un driver
+di dispositivo con cui Turbo Debugger puï comunicare quando vuole
+usare le funzioni di un particolare debugger hardware.
+
+TDH386.SYS: Il driver di dispositivo dell'hardware 80386
+---------------------------------------------------------
+
+Questa informazione ä rivolta ai produttori di debugger hardware
+che vogliono utilizzare le loro schede con Turbo Debugger. (Si
+noti che occorre conoscere la struttura generale dei driver di
+dispositivo del DOS. Si rimanda al DOS per ulteriori informazioni
+su come scrivere i driver di dispositivo.)
+
+Il disco di distribuzione di Turbo Debugger contiene il file
+TDH386.SYS, che ä un driver di dispositivo hardware che consente
+a Turbo Debugger di utilizzare i registri di debugging sul
+processore 80386. Questo driver puï essere utilizzato copiandolo
+nel disco del DOS e inserendo la seguente riga nel file CONFIG.SYS:
+
+          DEVICE = TDH386.SYS
+
+Turbo Debugger utilizzerÖ quindi ll capacitÖ hardware dell'80386
+ogni volta che puï accelerare l'esecuzione dei punti di arresto.
+Questo significa, naturalmente, che ä possibile utilizzare solo
+questo driver di dispositivo se il sistema utilizza il processore
+80386.
+
+Impostazione dei punti di arresto hardware
+---------------------------------------------
+
+Vi sono tre modi per impostare un punto di arresto hardware:
+
+Si puï selezionare Breakpoints/Changed Memory Global. Nella casella
+di immissione della finestra di dialogo che viene aperta, si puï
+introdurre l'indirizzo della memoria, seguito dal numero di byte
+da controllare per vedere se il programma ha cambiato qualcosa in
+quella parte di memoria.
+
+Dal menu locale della finestra Breakpoints si puï selezionare Set
+Options per aprire la finestra di dialogo Breakpoint Options.
+Si possono impostare i pulsanti radio Condition ad Hardware.
+
+Nella finestra di dialogo Breakpoint Options, si possono impostare
+i pulsanti radio Condition a Changed Memory. Quindi si puï selezionare
+Hardware Options e le opzioni che si desiderano utilizzare nella
+finestra di dialogo Breakpoint Options.
+
+Quando si imposta un punto di arresto utilizzando il comando
+Changed Memory Global, Turbo Debugger stabilisce automaticamente
+se quel punto di arresto puï utilizzare l'hardware a disposizione.
+Se puï, Turbo Debugger imposta un punto di arresto hardware, ed
+indica che il punto di arresto ä impostato nell'hardware mettendo
+un asterisco (*) dopo il numero del punto di arresto globale nel
+riquadro a sinistra della finestra Breakpoint.
+
+Le seguenti due sezioni descrivono come impostare i punti di
+arresto generici. Innanzitutto, verranno indicati i tipi di
+punti di arresto che si possono impostare  con il driver di
+dispositivo TDH386.SYS, e quindi verranno indicate tutte le
+opzioni dei punti di arresto dell'hardware che possono funzionare
+con altri driver di dipositivo di debugger hardware. Si rimanda
+alla documentazione per ulteriori informazioni sul driver di
+dispositivo particolare.
+
+Condizioni hardware consentite con TDH386.SYS
+----------------------------------------------
+
+Quando si sta utilizzando TDH386.SYS con la versione comune di
+Turbo Debugger, con il comando Hardware Options del menu locale
+della finestra Breakpoints si possono impostare i seguenti tipi
+di punti di arresto hardware:
+
+* prelievo delle istruzioni
+
+* lettura dalla memoria
+
+* lettura o scrittura della memoria
+
+Quando si utilizza TDH386.SYS non ä possibile impostare qualsiasi
+tipo di dato corrispondente; occorre sempre impostare i pulsanti
+radio Data Match a Match All. Si puï anche considerare un unico
+indirizzo di memoria o una serie di indirizzi di memoria. Una
+serie puï racchiudere da 1 a 16 byte, a seconda di quanti altri
+punti di arresto si sono impostati e a seconda dell'indirizzo
+iniziale della serie.
+
+Si puï utilizzare il controllo dei dati con i punti di arresto che
+non sono pió lunghi di 4 byte.
+
+Le altre opzioni della finestra di dialogo Hardware Breakpoint a
+destra del menu locale della finestra Breakpoints sono per gli
+altri debugger hardware e driver di dispositivo che potrebbero
+richiedere pió modalitÖ corrispondenti.
+
+TDH386.SYS puï anche essere utilizzato con Turbo Debugger e con il
+debugger virtuale (TD386). In questo caso, si possono usare
+diversi tipi di punti di arresto hardware, tra cui gli accessi alla
+memoria o all'input/output.
+
+La finestra di dialogo Hardware Breakpoint Options
+---------------------------------------------------
+
+Questa sezione descrive la finestra di dialogo Hardware
+Breakpoint Options che puï essere aperta tramite il comando
+Hardware Options del menu locale della finestra Breakpoints.
+Si ricordi che l'hardware nella maggioranza dei casi non richiede
+tutte le combinazioni di corrispondenza che si possono
+specificare da questo menu. Per le combinazioni consentite per il
+driver di dispositivo TDH386.SYS fornito insieme a Turbo Debugger,
+si rimanda alla sezione precedente.
+
+La finestra di dialogo Hardware Conditions consente di impostare
+i tre criteri di corrispondenza che costituiscono un punto di
+arresto hardware:
+
+* il tipo di ciclo di bus che verrÖ rilevato
+
+* la fascia di indirizzi che verrÖ rilevato
+
+* la fascia di valori di dati che verrÖ rilevato
+
+Ad esempio, un punto di arresto hardware potrebbe indicare
+"Watch for an I/O write anywhere from address 3F8 to 3FF as long
+as the data value is equal to 1". Questo punto di arresto verrÖ
+quindi attivato ogni volta che un byte di 1 viene scritto in
+qualsiasi posizione di input/output che controlla la porta
+seriale COM1.
+
+Di solito, si impostano dei punti di arresto molto pió semplici di
+questo, come "Watch for I/O to address 200".
+
+I pulsanti radio Cycle Type consentono di fare le seguenti
+impostazioni:
+
+Read Memory                   Rilevare letture di memoria
+Write Memory                  Rilevare scritture di memoria
+Access Memory                 Rilevare letture o scritture di memoria
+Input I/O                     Rilevare input I/O
+Output I/O                    Rilevare output I/O
+Both I/O                      Rilevare input o output I/O
+Fetch Instruction             Rilevare prelievo delle istruzioni
+
+L'opzione Access Memory ä una combinazione delle opzioni Read
+Memory e Write Memory che rileva o le letture di memoria o
+le scritture di memoria. Allo stesso modo, l'opzione Both I/O
+rileva l'input o l'output I/O.
+
+Alcuni debugger hardware sono in grado di distinguere le letture
+di semplici dati dalla memoria e dal prelievo di istruzioni. In
+questo caso, se si imposta un punto di arresto per rilevare le letture
+di memoria, il prelievo di un'istruzione da quella posizione non attiverÖ
+il punto di arresto hardware. I cicli di istruzioni comprendono tutti i
+byte che il processore legge al fine di determinare l'operazione
+di istruzione da eseguire, compresi i byte prefisso, gli indirizzi
+degli operandi, e i valori immediati. I dati effettivi letti o scritti
+in memoria indicati dall'indirizzo di un operando non vengono considerati
+come facenti parte del prelievo di istruzioni. Ad esempio,
+
+       MOV     AX,[1234]
+
+estrae 3 byte di istruzioni dalla memoria e legge 2 byte di dati.
+Se si utilizza la rilevazione del prelievo di istruzioni, si ricordi
+che la famiglia di processori 80x86 preleva prima le istruzioni che
+devono essere eseguite, cosç si possono ottenere delle rilevazioni false,
+a seconda che il debugger hardware possa classificare le istruzioni
+prelevate prima da quelle che vengono veramente eseguite .
+
+I pulsanti radio Address consentono di fare le seguenti
+impostazioni:
+
+Above             Rilevazione al di sopra di un indirizzo
+Below             Rilevazione al di sotto di un indirizzo
+Range             Rilevazione entro la fascia di indirizzo
+Not Range         Rilevazione fuori dalla fascia di indirizzo
+Less or Equal     Rilevazione al di sotto o uguale all'indirizzo
+Greater or Equal  Rilevazione al di sopra o uguale all'indirizzo
+Equal             Rilevazione di un unico indirizzo
+Unequal           Rilevazione di tutti tranne un unico indirizzo
+Match All         Rilevazione di qualsiasi indirizzo
+
+I pulsanti radio Data Match  consentono di fare le seguenti
+impostazioni:
+
+Above                   Rilevazione al di sopra del valore
+Below                   Rilevazione al di sotto del valore
+Range                   Rilevazione entro la fascia di valori
+Not Range               Rilevazione fuori della fascia di valori
+Less or Equal           Rilevazione al di sotto o uguale al valore
+Greater or Equal        Rilevazione al di sopra o uguale al valore
+Equal                   Rilevazione di un unico valore
+Unequal                 Rilevazione di tutti tranne un unico valore
+Match All               Rilevazione di qualsiasi valore
+
+Se si attivano le opzioni Data o Address che implicano qualsiasi
+condizione inferiore o superiore, un singolo indirizzo rileva sia
+la fascia che inizia a zero e si estende al valore specificato, sia
+quella che inizia al valore specificato e si estende al valore pió
+alto consentito per gli indirizzi o i dati.
+
+Osservazione tramite debugger hardware
+-----------------------------------------
+
+L'interfacciamento del driver di dispositivo fornisce l'accesso
+indipendente del dispositivo alle funzionalitÖ dei diversi
+debugger hardware. Per compiere questo, le caratteristiche comuni
+di diversi debugger hardware sono state combinate in un debugger
+hardware generico. Turbo Debugger quindi utilizza questo modello
+astratto per fare delle richieste al driver di dispositivo. Una
+scheda particolare potrebbe non essere in grado di avvalersi di
+tutte le operazioni specificate dall'interfacciamento astratto. In
+questo caso, il driver di dispositivo puï informare Turbo
+Debugger sul fatto che un'operazione richiesta non puï essere
+eseguita. Una scheda hardware puï anche offrire una maggior
+funzionalitÖ rispetto a quella che determina l'interfacciamento
+astratto. In questo caso, Turbo Debugger non puï utilizzare le
+funzionalitÖ supplementari della scheda.
+
+PoichÇ ci si aspetta che l'interfacciamento del driver di dispositivo
+racchiuda le nuove funzionalitÖ nelle realizzazioni future, si ä
+definito un campo di stato del "livello di implementazione" che il
+driver di dispositivo restituisce quando gli viene richiesto.
+In questo modo Turbo Debugger sa cos'ä in grado di fare il driver
+di dispositivo e i driver pió vecchi sono compatibili, mentre quelli
+nuovi possono approfittare delle funzionalitÖ nelle future
+implementazioni dell'interfacciamento.
+
+L'interfacciamento del debugger hardware divide le funzionalitÖ delle
+schede dei debugger in tre principali aree di funzionalitÖ:
+
+* punti di arresto di accesso alla memoria e all'input/output
+
+* memoria di ritracciamento delle istruzioni
+
+* memoria aggiuntiva sulla scheda per le tabelle dei simboli
+
+Questa versione dell'interfacciamento si avvale solo della prima
+categoria. Le future implementazioni stabiliranno un'interfacciamento
+che accederÖ alle altre funzionalitÖ. Quando si scrive un driver di
+dispositivo, occorre ricordarsi che queste altre funzionalitÖ
+verranno messe a disposizione molto presto.
+
+L'interfacciamento del driver di dispositivo
+----------------------------------------------
+
+Il driver di dispositivo ä un driver di dispositivo del tipo di
+carattere ordinario chiamato TDH386.SYS. Occorre inserire la
+seguente istruzione nel file CONFIG.SYS al fine di caricare il
+driver quando si avvia il sistema:
+
+        DEVICE = nomedrvr.ext
+
+nomedrvr.ext ä il nome del file del driver di dispositivo che si
+ä creato.
+
+Chiamate alle funzioni del driver di dispositivo
+--------------------------------------------------
+
+Il driver di dispositivo deve avvalersi delle seguenti chiamate
+alle funzioni:
+
+INIT (codice di comando = 0)
+Quando il driver di dispositivo viene chiamato per la prima volta. Il
+codice di questa funzione deve accertarsi che la scheda hardware sia
+disattivata e si trovi in uno stato di riposo.
+
+READ (codice di comando = 4)
+Chiamata da Turbo Debugger per leggere il blocco di stato
+dall'ultimo comando inviato al driver di dispositivo. Si dovrebbe
+conservare l'ultimo stato nell'area dati all'interno del driver e
+restituire tanti byte quanti ne sono stati richiesti. Ogni volta
+che viene inviata una lettura, si deve iniziare ad inviare
+dall'inizio del blocco di stato, anche se la richiesta della
+precedente lettura non era abbastanza lunga per inviare l'intero
+blocco.
+
+La sezione "I blocchi di stato restituiti dal driver di
+dispositivo" descrive i vari blocchi di stato che il driver di
+dispositivo puï restituire in risposta ai diversi blocchi di
+comandi.
+
+READNOWAIT (codice di comando = 5)
+Restituisce il primo byte del blocco di stato. Il bit occupato
+dovrebbe sempre essere impostato a 0, indicando che quel dato ä
+disponibile in qualsiasi momento.
+
+READSTATUS (codice di comando = 6)
+Imposta sempre il bit occupato a 0, indicando che verrÖ immediatamente
+eseguita una richiesta di lettura successiva.
+
+READFLUSH (codice di comando = 7)
+Imposta semplicemente il bit eseguito nello stato di ritorno.
+
+WRITE (codice di comando = 8)
+Chiamata da Turbo Debugger per inviare un comando al driver di
+dispositivo. Il comando avrÖ una lunghezza variabile, a seconda
+del tipo di comando. Si puï sia copiare i dati in un'area di
+lavoro all'interno del driver di dispositivo, sia accedere ad
+esso direttamente usando il puntatore ai dati che fa parte della
+richiesta di driver di dispositivo.
+
+La prossima sezione descrive i vari blocchi di comandi che Turbo
+Debugger puï inviare al driver di dispositivo.
+
+WRITEVERIFY (codice di comando = 9)
+Fa la stessa cosa di WRITE (codice di comando 8).
+
+WRITESTATUS (codice di comando = 10)
+Imposta semplicemente il bit eseguito nello stato di ritorno.
+
+WRITEFLUSH (codice di comando = 11)
+Imposta semplicemente il bit eseguito nello stato di ritorno.
+
+Tutte le altre chiamate di funzioni dovrebbero impostare il bit
+di errore (bit 15) nella parola di stato restituita e inserire
+un codice di errore "Unknown command" (3) nel byte low della
+word di stato.
+
+Blocchi di comandi inviati al driver
+-------------------------------------
+
+Tutti i blocchi di comandi inviati al driver di dispositivo dalla
+chiamata alla funzione WRITE iniziano con un byte che descrive
+l'operazione da eseguire. I byte successivi indicano delle
+informazioni supplementari del comando particolare.
+
+Quando viene impostato un punto di arresto hardware, ä compito
+del driver di dispositivo controllare che sia stato dato un blocco
+di parametri accettabile. Esso non puï ignorare i campi che
+richiedono un'operazione che non puï essere eguita. SarÖ necessario
+controllare ogni campo per accertarsi che l'hardware possa
+richiedere, e se non puï, occorrerÖ impostare il codice di ritorno
+adatto.
+
+Il primo byte puï contenere uno dei seguenti codici di comandi:
+
+0   Installa i vettori
+1   Fornisce le funzionalitÖ hardware
+2   Attiva i punti di arresto hardware
+3   Disattiva i punti di arresto hardware
+4   Imposta un punto di arresto hardware
+5   Cancella un punto di arresto hardware
+6   Imposta l'indirizzo di base di input/output
+7   Rimuove i vettori
+
+I seguenti comandi inviano dei dati supplementari dopo il codice
+di comando:
+
+Install vectors (code 0)
+4 byte      Puntatore far nella routine di vettori
+
+Questo ä un puntatore di 32 bit, la prima parola ä l'offset, e la
+seconda ä il segmento. Occorre memorizzare questo indirizzo in
+modo che il driver di dispositivo possa saltare ad esso quando si
+verifica un punto di arresto dell'hardware. Questa routine
+dovrebbe anche installare qualsiasi vettore dell'interrupt di cui
+necessita il driver di dispositivo. Quando per la prima volta
+Turbo Debugger viene attivato, chiama questa routine una volta.
+La funzione Remove Vectors (codice 10) ä chiamata una volta da Turbo
+Debugger quando non ha pió bisogno di usare il driver di
+dispositivo dell'hardware. A questo punto, si dovrebbe sostituire
+qualsiasi vettore rilevato quando la funzione 0 ä stata chiamata
+ed accertarsi che l'hardware sia disattivato.
+
+Si puï impostare un punto di arresto hardware (codice 4)
+
+1 byte       Tipo di punto di arresto
+
+0    lettura di memoria
+1    Scrittura di memoria
+2    Lettura o scrittura di memoria
+3    Lettura di input/output
+4    Scrittura di input/output
+5    Lettura o scrittura di input/output
+6    Prelievo di istruzioni
+
+1 byte       ModalitÖ di rilevazione di indirizzo
+
+0    Rilevare qualsiasi indirizzo, non ha importanza quale
+1    Uguale al valore di testo
+2    Non uguale al valore di testo
+3    Al di sopra del valore di testo
+4    Al di sotto del valore di testo
+5    Al di sotto o uguale al valore di testo
+6    Al di sopra o uguale al valore di teso
+7    Entro la fascia generale
+8    Fuori dalla fascia
+
+4 byte        Indirizzo basso
+
+Un indirizzo di memoria, in forma lineare di 32 bit. Se la
+modalitÖ di rilevazione di indirizzo richiede uno o pió
+indirizzi per la verifica di riscontro, compaiono qui il valore
+unico o il valore inferiore.
+
+4 byte        Indirizzo alto
+
+Un indirizzo di memoria, in forma lineare di 32 bit. Se la
+modalitÖ di rilevazione di indirizzo richiede due indirizzi
+per la verifica di riscontro di una fascia, compaiono qui il
+secondo valore o quello pió alto.
+
+2 byte         Conteggio di controllo
+1 byte         Dimensione della rilevazione di dati, 1 = byte,
+               2 = word, 4 = doubleword
+1 byte         Sorgente di ciclo di bus rilevato:
+
+1 CPU
+2 DMA
+3 sia CPU che DMA
+
+1 byte          ModalitÖ di rilevazione di dati
+
+0     Rilevazione di qualsiasi dato, non ha importanza quale
+1     Uguale al valore di testo
+2     Non uguale al valore di testo
+3     Al di sopra del valore di testo
+4     Al di sotto del valore di testo
+5     Al di sotto o uguale al valore di testo
+6     Al di sopra o uguale al valore di testo
+7     Entro la fascia generale
+8     Fuori dalla fascia generale
+
+4 byte            Valore di dati bassi
+
+Se la modalitÖ di rilevazione di dati richiede uno o pió
+valori di dati, questo campo indica il primo o l'unico valore. La
+dimensione della rilevazione di dati stabilisce quanti byte di
+questo campo sono importanti.
+
+4 byte            Valore di dati alti
+
+Se la modalitÖ di rilevazione di dati richiede due valori di
+dati, questo campo indica il secondo valore. La dimensione della
+rilevazione di dati stabilisce quanti byte di questo campo
+sono importanti.
+
+4 byte             Maschera di dati
+
+Se l'hardware si avvale di essa, questo campo controlla quali bit
+dei dati sono esaminati per la condizione di rilevazione.
+
+Clear a hardware breakpoint (codice 5)
+
+1 byte        L'handle del punto di arresto da cancellare. L'handle
+ä stato indicato a Turbo Debugger dal comando Set Hardware Breakpoint
+(codice 4)
+
+Set I/O board base address (codice 6)
+
+2 byte       L'indirizzo di base della scheda del debugger
+             hardware
+
+Blocchi di stato restituiti dal driver di dispositivo
+------------------------------------------------------
+
+La chiamata alla funzione READ restituisce il blocco di stato dal
+driver di dispositivo. I diversi comandi scritti nel driver di
+dispositivo risultano in vari blocchi di stato costruiti per
+riferire cosa ä successo. Tutti i blocchi di stato iniziano con
+un unico byte che descrive il risultato globale dell'operazione
+richiesta. I byte successivi restituiscono le informazioni
+supplementari particolari del comando che ha generato il blocco
+di stato.
+
+I seguenti codici di stato possono essere restituiti nel primo
+byte:
+
+0      Il comando ä stato eseguito.
+
+1      L'handle indicato non ä valido.
+
+2      Pieno, non si possono pió impostare dei punti di arresto.
+
+3      Il punto di arresto era troppo complesso per l'hardware.
+Il punto di arresto non ä mai potuto essere impostato; l'hardware
+non ä in grado di avvalersi della combinazione di ciclo di bus,
+indirizzo, e rilevazione di dati che Turbo Debugger ha richiesto.
+
+4       Il comando non ä potuto essere eseguito a causa delle
+restrizioni imposte da un comando precedente.
+Il comando avrebbe potuto essere eseguito se alcune precedenti
+operazioni non glielo avessero impedito. Questo potrebbe
+verificarsi, ad esempio, se l'hardware consente solo un valore di
+rilevazione di dati, ma Turbo Debugger cerca di di impostare
+un secondo punto di arresto hardware con un valore di rilevazione
+di dati diverso dal primo punto di arresto.
+
+5       Il driver di dispositivo non ä riuscito a trovare la
+scheda dell'hardware.
+
+6        Si ä verificato un guasto nell'hardware.
+
+7        Il codice di un comando non valido ä stato inviato al
+driver.
+
+8        Il driver non ä stato inizializzato con il codice di
+funzione 0, cosç non puï ancora essere fatto niente.
+
+I seguenti comandi restituiscono le informazioni di stato
+supplementari dopo i byte del codice di stato:
+
+Get hardware capabilities (codice 1)
+
+2 byte      Numero della versione dell'interfacciamento del driver di
+            dispositivo (questa specifica).
+
+La versione corrente ä 1, le versioni successive incrementeranno
+questo numero.
+
+2 byte       Numero di versione del software del driver di
+             dispositivo.
+
+Per ogni versione realizzata del driver di dispositivo che si
+comporta in modo diverso, questo campo dovrebbe contenere un
+numero diverso. Questo consente a Turbo Debugger di assumere
+delle misure speciali se necessario, basate su questo campo.
+
+1 byte        Bit di configurazione
+
+Funzione Bit
+
+01       puï distinguere gli accessi alla CPU da quelli alla DMA
+11       puï scoprire i trasferimenti di DMA
+21       dispone di una maschera di dati
+31       i punti di arresto hanno un contatore di validitÖ
+41       puï far rilevare i dati e gli indirizzi
+
+1 byte        Tipi di punti di arresto richiesti (maschera di
+              bit)
+
+Funzione Bit
+
+0     Lettura di memoria
+1     Scrittura di memoria
+2     Lettura e scrittura di memoria
+3     Lettura di input/output
+4     Scrittura di input/output
+5     Lettura o scrittura di input/output
+6     Prelievo di istruzioni
+
+2 byte        ModalitÖ di rilevazione di indirizzamento
+              richieste (maschera di bit)
+
+Funzione Bit
+
+0         Rilevazione di qualsiasi indirizzo, non importa quale
+1         Uguale al valore di testo
+2         Non uguale al valore di testo
+3         Al di sopra del valore di testo
+4         Al di sotto del valore di testo
+5         Al di sotto o uguale al valore di testo
+6         Al di sopra o uguale al valore di testo
+7         Entro la fascia generale
+8         Fuori dalla fascia
+
+2 byte        ModalitÖ di rilevazione di dati richieste (maschera
+di bit)
+
+Funzione Bit
+
+0         Rilevazione di qualsiasi dato, non importa quale
+1         Uguale al valore di testo
+2         Non uguale al valore di testo
+3         Al di sopra del valore di testo
+4         Al di sotto del valore di testo
+5         Al di sotto o uguale al valore di testo
+6         Al di sopra o uguale al valore di testo
+7         Entro la fascia generale
+8         Fuori dalla fascia
+
+1 byte         Lunghezza massima di rilevazione di dati
+
+Imposta a 1, 2, o 4 a seconda della maggior larghezza di
+rilevazione di dati o di maschera che l'hardware puï eseguire.
+
+2 byte          QuantitÖ di memoria sulla scheda in kilobyte.
+
+2 byte          Numero massimo di eventi di ritracciamento che
+                possono essere richiamati.
+
+2 byte          Byte di attivazione dell'indirizzo del punto di
+                arresto hardware.
+
+Specifica l'indirizzo del segmento in cui Turbo Debugger deve
+scrivere un byte con un valore di 1 per attivare i punti di
+arresto hardware. Il campo deve contenere 0 se il driver di
+dispositivo non richiede o non puï richiedere questa
+funzionalitÖ. Se la richiede, questo byte consente a Turbo
+Debugger di informare il driver di dispositivo che ha finito di
+scrivere nello spazio dell'indirizzo del programma sottoposto a
+debugging, e che gli accessi successivi possono provocare dei
+punti di arresto hardware.
+
+Set a hardware breakpoint (codice 4)
+
+1 byte         Un handle che Turbo Debugger utilizzerÖ per
+riferirsi a questo punto di arresto in futuro. Anche il driver di
+dispositivo utilizza questo handle quando richiede l'intervento
+di Turbo Debugger dopo che si ä verificato un punto di arresto
+dell'hardware. L'handle deve essere maggiore o uguale a zero
+(0). I valori negativi (quando il bit alto ä impostato) indicano
+una condizione speciale quando il driver di dispositivo richiama
+Turbo Debugger con un punto di arresto hardware.
+
+Recursive entry (codice -2)
+
+1 byte            Il valore speciale FE (esadecimale) puï essere
+restituito dal driver di dispositivo dell'hardware se ä stato
+ripetutamente introdotto mentre si eseguiva un punto di arresto.
+Questo puï accadere se un punto di arresto ä stato impostato nei
+6 byte a di sotto della parte superiore dello stack nel programma
+sottoposto a debugging. Se Turbo Debugger riceve questo codice di
+immissione, visualizzerÖ un messaggio che il driver di
+dispositivo non puï continuare a causa del punto di arresto
+impostato vicino alla parte superiore dello stack.
+
+Chiamata del driver di dispositivo in Turbo Debugger
+-----------------------------------------------------
+
+Quando la scheda dell'hardware e il software del driver di
+dispositivo hanno stabilito che si ä verificato un punto di
+arresto, il controllo deve essere trasferito nell'indirizzo
+all'interno di Turbo Debugger che ä stato specificato con il
+codice di comando 0 (set hardware breakpoint vector).
+
+Si deve saltare all'indirizzo del vettore con lo stato della CPU
+esattamente com'era quando si ä verificato il punto di arresto,
+ma con il registro AX del programma spinto sullo stack e un
+codice di immissione nel registro AH.
+Il codice di immissione puï essere:
+
+>= 0           L'handle del punto di arresto attivato
+
+-1 (FF)        Il pulsante di interruzione ä stato premuto
+
+Turbo Debugger non ritornerÖ mai al driver di dispositivo una
+volta che questo viene saltato da un punto di arresto
+hardware.

@@ -1,0 +1,199 @@
+
+
+			   FILT Versione 1.0
+			  ===================
+	  Copyright (c) 1988, 1989 by Borland International, Inc.
+
+       FILT ä un programma filtro che esegue alcune funzioni a
+       basso livello di formattazione e di traduzione. Come un
+       filtro, FILT riceve l'input e produce l'output attraverso il
+       dispositivo di consolle (CON). I file di input e di output
+       devono essere specificati con i comandi di redirezione del
+       DOS. Di seguito viene riportata la sintassi di base:
+
+         FILT opzioni < file_input > file_output
+
+       Le opzioni sono composte da singole lettere e vengono
+       descritte di seguito. Il file_input e il file_output, in
+       congiunzione con i caratteri di redirezione < e >, indicano
+       al DOS quali file usare per l'input e l'output. Se non viene
+       specificato alcun file di input, verrÖ usata la tastiera.
+       Se non viene specificato alcun file di output, verrÖ usato
+       lo schermo.
+
+       Le opzioni sono singole lettere che tengono conto della
+       direttiva di distinzione tra maiuscole e minuscole. Puï
+       essere specificato qualsiasi numero di opzioni, e alcune
+       opzioni sono seguite da un numero. Tutti i numeri sono
+       decimali, seguono la lettera dell'opzione (senza spazi),e
+       devono essere minori o uguali a 65.535.
+
+       Sommario delle opzioni (# denota il numero):
+
+         Sostituzione di tabulazioni:    Assegnamento tabulazioni:
+
+           x  = trasforma le tabulazione    e  = cancella tutte
+                in spazi                         le tabulazioni
+           c  = trasforma gli spazi in      t# = imposta la
+                tabulazioni                      tabulazione
+
+         Sostituzione di caratteri:       Formato riga:
+
+           S  = elimina il bit alto         m  = aggiunge un
+                                                 margine sinistro
+           C  = elimina i caratteri di      d  = cancella il
+                controllo                        margine sinistro
+           H  = elimina il byte alto (>127) l# = tronca le righe
+                                                 lunghe
+           U  = trasforma tutte le lettere  r  = rimuove gli spazi
+                in maiuscole                     finali
+           L  = trasforma tutte le lettere  b# = byte di fine riga
+                in minuscole
+           A  = trasforma la lettera        s  = memorizza i carriage
+                iniziale delle parole in         return (ritorni
+                maiuscola                        carrello)
+
+         Fine file:                     Buffer I/O:
+
+           z  = ignora ^Z in input         i# = dimensione del
+                                                buffer di input
+                                                (20000)
+           Z  = sopprime ^Z in output      o# = dimensione del
+                                                buffer di output
+                                                (20000)
+
+       Ecco in ordine alfabetico tutte le opzioni (prima minuscole):
+
+         ?   Aiuto.  Visualizza un sommario delle opzioni.
+
+         b#  Byte alla fine delle righe di input.  Definisce il
+             carattere che identificherÖ una fine di riga (EOL).
+             Per esempio, b13 farÖ sç che una riga venga terminata
+             quando si raggiunge un ritorno carrello.  Il byte
+             standard ä b10.  Questa opzione non determina come
+             verranno scritte le EOL ; esse terminano sempre con la
+             combinazione CR+LF (carriage return+linefeed).
+
+         c   Comprime gli spazi in tabulazioni.  Quando ä
+             possibile, gli spazi verranno sostituiti da caratteri
+             di tabulazione (ASCII 9).  Le tabulazioni predefinite
+             sono ogni otto colonne, ma possono essere impostate
+             manualmente con le opzioni e e t.
+
+         d#  Cancella il margine sinistro.  Il numero specificato
+             di caratteri verrÖ cancellato dalla parte sinistra di
+             tutte le righe.  VerrÖ cancellato qualsiasi
+             carattere.  Si noti che le tabulazioni contano solo
+             come un carattere.
+
+         e   Cancella tutte le tabulazioni. Verranno cancellate
+             tutte le tabulazioni. Le tabulazioni definite
+             dall'utente (impostate con l'opzione t) dovrebbero
+             seguire l'opzione e.
+
+         h   Aiuto.  Visualizza un sommario delle opzioni.
+
+         i#  Dimensione del buffer di input.  Imposta la dimensione
+             del buffer di input.  La dimensione standard ä i20000.
+             Rendendola pió grande si potrÖ migliorare la velocitÖ
+             di esecuzione di un dispositivo di input lento, mentre
+             rendendola pió piccola si potrÖ utilizzare meno memoria.
+
+         l#  Tronca le righe lunghe.  Le righe pió lunghe della
+             lunghezza specificata verranno troncate.  Di norma
+             ä accettabile qualsiasi lunghezza di riga (fino a
+             circa 600 caratteri).
+
+         m#  Aggiunge al margine sinistro.  VerrÖ aggiunto al margine
+             sinistro il numero specificato di spazi.
+
+         o#  Dimensione del buffer di output.  Imposta la dimensione
+             del buffer di output.  La dimensione standard ä o20000.
+             Rendendola pió grande si potrÖ migliorare la velocitÖ
+             di esecuzione di un dispositivo di output lento, mentre
+             rendendola pió piccola si potrÖ utilizzare meno memoria.
+
+         s   Memorizza i carriage return (ritorni carrello).  Tutti
+             i carriage return (ASCII 13) di norma vengono cancellati
+             dall'input.  Questa opzione potrebbe essere utile
+             in un file in cui i caratteri di fine riga sono diversi
+             dai carriage return, ma in cui i carriage return compaiono
+             con significati speciali.
+
+         r   Rimuove gli spazi finali.  Qualsiasi spazio (o
+             tabulazione quando si usa l'opzione c) alla fine
+             delle righe verrÖ rimosso. Gli spazi alla fine delle
+             righe, anche se superflui, vengono spesso lasciati
+             in sospeso dal sistema di video scrittura.
+
+         t#  Imposta una tabulazione.  Una tabulazione verrÖ
+             impostata nel numero di colonna specificato.  La
+             colonna pió a sinistra ä la colonna uno.  Puï essere
+             specificato qualsiasi numero di tabulazioni.  Le
+             tabulazioni predefinite sono ogni otto colonne, per
+             esempio, t9 t17 t25 ecc.
+
+         x   Espande le tabulazioni agli spazi.  Tutti i caratteri
+             di tabulazione (ASCII 9) verranno sostituiti con un
+             numero equivalente di spazi.  Le tabulazioni
+             predefinite sono ogni otto colonne, ma possono essere
+             impostate manualmente con le opzioni e e t.
+
+         z   Ignora ^Z nel file di input.  Un ^Z (ASCII 26)
+             normalmente identifica la fine di un file.  Se viene
+             usata questa opzione, verrÖ letto l'intero numero di
+             byte registrati nella directory.
+
+         A   Scrive le parole maiuscole.  Le lettere che seguono
+             un'altra lettera verranno convertite in minuscole,
+             tutte le altre lettere verranno convertite in
+             maiuscole.
+
+         C   Elimina i caratteri di controllo.  Tutti i caratteri
+             sotto i 32 ASCII verranno rimossi. I caratteri CR, LF,
+             Ctrl-Z rappresentano delle.
+
+         H   Sopprime i byte high.  Tutti i caratteri sopra i 127
+             ASCII verranno rimossi.
+
+         L   Converte tutte le lettere in minuscole.
+
+         S   Elimina i bit high.  Il bit high di tutti i byte
+             sopra i 127 ASCII verrÖ cancellato.
+
+         U   Converte tutte le lettere in maiuscole.
+
+         Z   Sopprime ^Z nel file di output. Normalmente un ^Z
+             (ASCII 26) viene scritto alla fine del file. Se
+             viene usata questa opzione, non verrÖ scritto un ^Z.
+
+       Ecco alcuni esempi dell'opzione FILT e delle specifiche di file:
+
+         filt ?
+           Visualizza sullo schermo un sommario di tutte le
+           opzioni.
+
+         filt cr < data.fil > data.new
+           Significa: c = comprimere gli spazi in caratteri di
+           tabulazione; e r = rimuovere gli spazi finali.  Il
+           file di input ä DATA.FIL e quello di output ä DATA.NEW.
+           Questa combinazione di opzioni puï ridurre maggiormente
+           la dimensione di un file comprimendo o rimuovendo gli
+           spazi non necessari.
+
+         filt zZCHi500o500 < a:text.xxx > c:\doc\text.txt
+           Significa: z = ignorare qualsiasi input ^Zs; Z = non
+           scrivere un ^Z alla fine del file; C = rimuovere tutti
+           i caratteri di controllo; H = rimuovere qualsiasi
+           carattere con un valore maggiore di 127; i500 =
+           impostare la dimensione del buffer di input a 500 byte;
+           e o500 = impostare la dimensione del buffer di output
+           a 500 byte.  Il file di input ä A:TEXT.XXX e il file
+           di output ä C:\DOC\TEXT.TXT.  Questa combinazione di
+           opzioni converte il file di input in un file ASCII puro
+           senza caratteri di controllo (eccetto i limiti delle
+           righe).  Si noti che vengono usati circa 39.000 byte
+           in meno di memoria durante l'esecuzione a causa delle
+           dimensioni dei buffer, 500+500=1000 invece dello
+           standard 20000+20000=40000.
+

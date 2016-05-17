@@ -1,0 +1,19 @@
+Ma cos'è il wireless?
+Il wireless è una tipologia di comunicazione tra dispositivi elettronici che non fa uso di cavi e quindi sono detti "wireless" i sistemi o dispositivi che implementano tale tecnologia
+
+Ogni sistema di comunicazione wireless è composto essenzialmente da tre apparati:
+-Il trasmettitore
+-Il ricevitore
+-E l'insieme degli elementi che si occupano diffondere e/o captare le onde magnetiche, con frequenze diverse a seconda dello standard implementato.
+Ad esempio in un portatile le funzioni di trasmissione e ricezione sono svolte dalla scheda wireless e dalle antenne.
+Una trasmissione può avvenire secondo 3 modalità: monodirezionale (simplex)[megafono], bidirezionale simultanea (full-duplex)[telefono] o bidirezionale alternata (half-duplex)[walkie-talkie].
+
+Wi-Fi è una tecnologia wireless di tipo WLAN nata alla fine del XX secolo.
+Attualmente le specifiche del Wi-Fi sono definite nel protocollo IEE 802.11 e regolate dal consorzio Wi-Fi Alliance. Nel corso degli anni sono uscite numerose revisioni del protollo (chiamate classi), portando la velocità di trasmissione dei dati a livelli impensabili anni fa. 
+-classe a 54 Mb/s 5 GHz
+-classe b 11 Mb/s 2,4 GHz
+-classe g 54 Mb/s 2,4 GHz
+-classe n 450 Mb/s 2,4/5 Ghz
+-classe ac 3 Gb/s 5 GHz
+Negli ultimi anni la tecnologia Wi-Fi ha avuto una grandissima diffusione, grazie a numerosi fattori: bassi prezzi di produzione, bassi consumi, non avere cavi, la facilità di connessione.
+Pur avendo dei piccoli problemi, come la qualità del servizio non constante e leggere latenze, al giorno d'oggi in quasi ogni dispositivo collegabile alla Rete è presente un module Wi-Fi e di conseguenza l'uso di soluzione cablate è venuto meno.

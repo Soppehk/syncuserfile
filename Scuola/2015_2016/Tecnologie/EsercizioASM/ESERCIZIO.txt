@@ -1,0 +1,41 @@
+http://www.dosbox.com/download.php?main=1
+
+1.effettua il download e installa
+2.crea una cartella esercizi in c:
+3.copia in C:\esercizi la cartella td
+4.copia dentro C:\esercizi\td i 5 file 3bc2015.*
+5.lancia DOSBox 
+6.digita mount x c:\esercizi (invio)
+7.digita x: (invio)
+8.digita cd td (invio)
+9.digita td 3bc2015 (invio)
+10. dal menu VIEW scegli CPU
+11. esegui passo-passo il programma con F8
+12. rispondi alle domande
+
+Quanto vale ax quando ip vale 0003? 4031	
+Quanto vale ds quando ip vale 0003? 401D
+
+Quanto vale ds quando ip vale 0005? perchè? 4031, perchè ds ha preso il valore di ax
+
+Quanto vale ax quando ip vale 0009? perchè? 0000, perchè ad ax è stato sottrato ax
+Quanto valgono le flag z e s quando ip vale 0009? perchè? Rispettivamente 1 e 0, 
+
+Quanto valgono num1 e num2? Rispettivamente 5 e -4
+Quanto valgono al e bl quando ip vale 0010 ? 5 e FC
+Quanto vale ris quando ip vale 0015? perchè? 1,
+Quanto vale car3 quando ip vale 0023? perchè? 62
+Quanto vale dx quando ip vale 0027? perchè? 7530
+Quanto valgono le flag z e s quando ip vale 002B? perchè? 0 e 0
+
+Dal menu VIEW scegli DUMP
+
+Quanto vale (in esadecimale e in ASCII) il byte in posizione ds:0000 ? 50 72 69 6D 6F 20 70 72 Primo pr
+Quanto vale (in esadecimale e in ASCII) il byte in posizione ds:0006 ?
+
+
+Dal menu FILE scegli QUIT
+Digita EXIT (invio)
+
+
+

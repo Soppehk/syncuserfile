@@ -1,0 +1,8 @@
+[Dolphin]
+PreviewsShown=true
+SortFoldersFirst=false
+SortRole=date
+Timestamp=2016,5,17,18,21,43
+Version=3
+ViewMode=1
+VisibleRoles=Details_text,Details_permissions,Details_size,Details_date,Details_path,CustomizedDetails
