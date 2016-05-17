@@ -1,6 +1,6 @@
 #include <iostream>
-#define NFILE 5
-#define NPOLTRONE 5
+#define NFILE 1
+#define NPOLTRONE 2
 using namespace std;
 
 void InizPosti(int posti[NFILE][NPOLTRONE]){
@@ -14,15 +14,15 @@ void InizPosti(int posti[NFILE][NPOLTRONE]){
 	return;
 }
 
-void Stampa(int posti[NFILE][NPOLTRONE], int nposti, int &npostiocc){
+void Stampa(int posti[NFILE][NPOLTRONE], int nposti, int npostiocc){
 
-	cout<<"PALCO"<<endl<<" ";
+	cout<<" PALCO"<<endl<<" ";
 	for (int i=0;i<NPOLTRONE;i++){
 		cout<<"-";
 	}
 	cout<<endl<<" ";
 
-    for (int i=0;i<NFILE;i++){
+    for (int i=0;i<NPOLTRONE;i++){
 		cout<<i+1;
 	}
     cout<<endl;
@@ -32,7 +32,6 @@ void Stampa(int posti[NFILE][NPOLTRONE], int nposti, int &npostiocc){
         for (int j=0;j<NPOLTRONE;j++){
             if (posti[i][j]==1){
                 cout<<"X";
-                npostiocc++;
             } else {
                 cout<<"-";
             }
@@ -47,11 +46,11 @@ void Stampa(int posti[NFILE][NPOLTRONE], int nposti, int &npostiocc){
 	return;
 }
 
-void AssPosto(int posti[NFILE][NPOLTRONE], int nposti, int npostiocc){
+void AssPosto(int posti[NFILE][NPOLTRONE], int nposti, int &npostiocc){
     int fila, poltrona;
 
-    if (npostiocc>nposti) {
-        cout<<"Posti terminati"<<endl;
+    if (nposti-npostiocc==0) {
+        cout<<"Posti terminati!"<<endl;
     } else {
         do {
             do {
@@ -69,6 +68,7 @@ void AssPosto(int posti[NFILE][NPOLTRONE], int nposti, int npostiocc){
             }
         } while(posti[fila-1][poltrona-1]==1);
         posti[fila-1][poltrona-1]=1;
+		npostiocc++;
     }
 
     return;
@@ -82,13 +82,12 @@ int main(){
 
 	cout<<"GESTORE POSTI TEATRO"<<endl;
 
-
 	InizPosti(posti);
 
     do {
-        Stampa(posti,nposti,npostiocc);
+		Stampa(posti,nposti,npostiocc);
         AssPosto(posti,nposti,npostiocc);
-
+		Stampa(posti,nposti,npostiocc);
         cout<<"Premi 0 per uscire dal programma o 1 per continuare: ";
         cin>>scelta;
     } while(scelta);
