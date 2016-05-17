@@ -54,6 +54,7 @@ void PartIniMem(int part[][2], int &np, int &dm){
 	return;
 }
 
+
 void CalcPartLib(int part1[][2], int part2[][2], int npo, int &npl, int dm){
 	npl=0;
 
