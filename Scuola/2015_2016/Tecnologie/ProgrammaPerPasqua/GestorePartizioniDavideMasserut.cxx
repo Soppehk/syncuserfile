@@ -237,9 +237,6 @@ void WorstFit(int part1[][2], int part2[][2], int &npo, int &npl, int dm){
 	return;
 }
 
-void Ciao(){
-}
-
 int main(){
 	int partocc[50][2], partlib[50][2]; //matrici contenenti i valori
 	int numpartocc, numpartlib=0, dimmem, scelta;
