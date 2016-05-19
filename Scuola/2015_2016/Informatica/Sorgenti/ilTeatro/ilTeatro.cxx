@@ -5,8 +5,8 @@ using namespace std;
 
 void InizPosti(int posti[NFILE][NPOLTRONE]){
 
-	for (int i=0;i<NFILE;i++){
-		for (int j=0;j<NPOLTRONE;j++){
+	for(int i=0;i<NFILE;i++){
+		for(int j=0;j<NPOLTRONE;j++){
 			posti[i][j]=0;
 		}
 	}
@@ -17,17 +17,17 @@ void InizPosti(int posti[NFILE][NPOLTRONE]){
 void Stampa(int posti[NFILE][NPOLTRONE], int nposti, int npostiocc){
 
 	cout<<"    PALCO"<<endl<<"    ";
-	for (int i=0;i<NPOLTRONE*4;i++){
+	for(int i=0;i<NPOLTRONE*4;i++){
 		cout<<"-";
 	}
 	cout<<endl<<"    ";
 
-    for (int i=0;i<NPOLTRONE;i++){
+    for(int i=0;i<NPOLTRONE;i++){
 		cout<<i+1<<"  ";
 	}
     cout<<endl;
 
-    for (int i=0;i<NFILE;i++){
+    for(int i=0;i<NFILE;i++){
         cout<<i+1;
 		if(i+1<10){
 			cout<<"   ";
@@ -39,10 +39,10 @@ void Stampa(int posti[NFILE][NPOLTRONE], int nposti, int npostiocc){
 			cout<<" ";
 		}
 
-        for (int j=0;j<NPOLTRONE;j++){
-            if (posti[i][j]==1){
+        for(int j=0;j<NPOLTRONE;j++){
+            if(posti[i][j]==1){
                 cout<<"X  ";
-            } else {
+            }else{
                 cout<<"-  ";
             }
         }
@@ -60,40 +60,40 @@ void AssPosto(int posti[NFILE][NPOLTRONE], int nposti, int &npostiocc){
     int fila, poltrona, posticont, i=0;
 	bool ctl;
 
-    if (nposti-npostiocc==0) {
+    if(nposti-npostiocc==0) {
         cout<<"Posti terminati!"<<endl;
-    } else {
-        do {
+    }else{
+        do{
 			ctl=false;
 			cout<<"Inserire il numero di posti da assegnare:"<<endl;
-			do {
+			do{
 				cout<<"==> ";
 				cin>>posticont;
-			} while((posticont<0)||(posticont>NPOLTRONE));
+			}while((posticont<0)||(posticont>NPOLTRONE));
 
-            do {
+            do{
                 cout<<"Inserire fila del primo posto da assegnare: ";
                 cin>>fila;
-            } while((fila>NFILE)||(fila<1));
+            }while((fila>NFILE)||(fila<1));
 
-            do {
+            do{
                 cout<<"Inserire poltrona del primo posto da assegnare: ";
                 cin>>poltrona;
-				if (poltrona+posticont-1>NPOLTRONE){
+				if(poltrona+posticont-1>NPOLTRONE){
 					ctl=true;
 					cout<<"Non ci sono abbastanza posti nella fila!"<<endl;
 				}
-            } while((poltrona>NPOLTRONE)||(poltrona<1));
+            }while((poltrona>NPOLTRONE)||(poltrona<1));
 
-			for (i = 0; i < posticont; i++) {
-				if (posti[fila-1][poltrona-1+i]==1) {
+			for(i = 0; i < posticont; i++) {
+				if(posti[fila-1][poltrona-1+i]==1) {
 	                cout<<"Il posto "<<poltrona+i<<"1 già occupato!"<<endl;
 					ctl=true;
 	            }
 			}
-        } while(ctl);
+        }while(ctl);
 
-		for (int i = 0; i < posticont; i++) {
+		for(int i = 0; i < posticont; i++) {
 			posti[fila-1][poltrona-1+i]=1;
 			npostiocc++;
 		}
@@ -105,24 +105,24 @@ void AssPosto(int posti[NFILE][NPOLTRONE], int nposti, int &npostiocc){
 void ElimPost(int posti[NFILE][NPOLTRONE], int nposti, int &npostiocc){
 	int fila, poltrona;
 
-	if (npostiocc==0) {
-        cout<<"Nessun eliminazione possibile!"<<endl;
-    } else {
-        do {
-            do {
+	if(npostiocc==0) {
+        cout<<"Nessu eliminazione possibile!"<<endl;
+    }else{
+        do{
+            do{
                 cout<<"Inserire fila: ";
                 cin>>fila;
-            } while((fila>NFILE)||(fila<1));
+            }while((fila>NFILE)||(fila<1));
 
-            do {
+            do{
                 cout<<"Inserire poltrona: ";
                 cin>>poltrona;
-            } while((poltrona>NPOLTRONE)||(poltrona<1));
+            }while((poltrona>NPOLTRONE)||(poltrona<1));
 
-            if (posti[fila-1][poltrona-1]==0) {
+            if(posti[fila-1][poltrona-1]==0) {
                 cout<<"Il posto è già libero!"<<endl;
             }
-        } while(posti[fila-1][poltrona-1]==0);
+        }while(posti[fila-1][poltrona-1]==0);
 
         posti[fila-1][poltrona-1]=0;
 		npostiocc--;
@@ -141,14 +141,14 @@ int main(){
 
 	InizPosti(posti);
 
-    do {
+    do{
 		Stampa(posti,nposti,npostiocc);
 		cout<<"Premi 1 per assegnare un posto o più o 2 per liberare un posto"<<endl;
-		do {
+		do{
 			cout<<"==> ";
 			cin>>scelta;
-		} while((scelta<1)||(scelta>2));
-		switch (scelta) {
+		}while((scelta<1)||(scelta>2));
+		switch(scelta) {
 			case 1: cout<<"Assegnazione posto"<<endl;
 					AssPosto(posti,nposti,npostiocc);
 					break;
@@ -159,12 +159,12 @@ int main(){
 
 		Stampa(posti,nposti,npostiocc);
         cout<<"Premi 0 per uscire dal programma o 1 per continuare: "<<endl;
-		do {
+		do{
 			cout<<"==> ";
 			cin>>scelta;
-		} while((scelta<0)||(scelta>1));
+		}while((scelta<0)||(scelta>1));
 
-    } while(scelta);
+    }while(scelta);
 
 	return 0;
 }
