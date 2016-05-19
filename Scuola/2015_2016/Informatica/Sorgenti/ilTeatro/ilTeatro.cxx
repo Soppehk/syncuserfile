@@ -10,6 +10,7 @@ void InizPosti(int posti[NFILE][NPOLTRONE]){
 			posti[i][j]=0;
 		}
 	}
+
 	return;
 }
 
@@ -100,7 +101,6 @@ void AssPosto(int posti[NFILE][NPOLTRONE], int nposti, int &npostiocc){
 
     return;
 }
-
 
 void ElimPost(int posti[NFILE][NPOLTRONE], int nposti, int &npostiocc){
 	int fila, poltrona;
