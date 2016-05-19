@@ -151,6 +151,7 @@ int InputProgrammi(int part[][2], int n){
 
 void InsProg(int part1[][2], int part2[][2], int i, int &npo, int &npl, int p, int dm){
 	int k=npo-1;
+
 	if(npo<=50){
 		while(part1[k][0]>part2[i][0]){
 			part1[k+1][0]=part1[k][0];
@@ -177,6 +178,7 @@ void InsProg(int part1[][2], int part2[][2], int i, int &npo, int &npl, int p, i
 
 void FirstFit(int part1[][2], int part2[][2], int &npo, int &npl, int dm){
 	int prog, i=0, scelta;
+
 	do{
 		prog=InputProgrammi(part2, npl);
 
@@ -195,6 +197,7 @@ void FirstFit(int part1[][2], int part2[][2], int &npo, int &npl, int dm){
 
 void BestFit(int part1[][2], int part2[][2], int &npo, int &npl, int dm){
 	int prog, i=0, scelta, min;
+
 	do{
 		min=1024;
 		prog=InputProgrammi(part2, npl);
@@ -217,6 +220,7 @@ void BestFit(int part1[][2], int part2[][2], int &npo, int &npl, int dm){
 
 void WorstFit(int part1[][2], int part2[][2], int &npo, int &npl, int dm){
 	int prog, i=0, scelta, max;
+	
 	do{
 		max=0;
 		prog=InputProgrammi(part2, npl);
