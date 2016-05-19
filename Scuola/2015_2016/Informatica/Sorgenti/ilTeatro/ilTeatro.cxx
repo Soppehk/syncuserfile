@@ -10,7 +10,6 @@ void InizPosti(int posti[NFILE][NPOLTRONE]){
 			posti[i][j]=0;
 		}
 	}
-
 	return;
 }
 
