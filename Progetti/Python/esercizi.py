@@ -1,4 +1,9 @@
-def saluto(ciao):
-    print(ciao)
+def solo_maiuscole(t):
+    res = []
+    for s in t:
+        if s.isupper():
+            res.append(s)
+    return res
 
-saluto("ciao")
+t = ["CIAO", "mona", "boltolin"]
+print(solo_maiuscole(t))
