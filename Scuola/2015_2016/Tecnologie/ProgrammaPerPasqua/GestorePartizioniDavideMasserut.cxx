@@ -8,7 +8,7 @@ void PartIniMem(int part[][2], int &np, int &dm) {
 	cout << "\nInserire dimensione della memoria(min 2MB, max 1024MB):" << endl;
 
 	do {
-        cout << "==> ";
+		cout << "==> ";
 		cin >> dm;
 	} while ((dm < 2) || (dm > 1024));
 
