@@ -158,8 +158,7 @@ int InputProgrammi(int part[][2], int n) {
 	return p;
 }
 
-void InsProg(int part1[][2], int part2[][2], int i, int &npo, int &npl, int p,
-						 int dm) {
+void InsProg(int part1[][2], int part2[][2], int i, int &npo, int &npl, int p, int dm) {
 	int k = npo - 1;
 
 	if (npo <= 50) {
