@@ -1,19 +1,21 @@
 #include<iostream>
 
+#define DIM 100
+
 int input(int &n) {
 	do {
-		std::cout << "Inserisci un numero maggiore di 3 e massimo 9: ";
+		std::cout << "Inserisci un numero maggiore di 3 e massimo " << DIM -1 << " : ";
 		std::cin >> n;
 		std::cout << std::endl;
-	} while((n < 3 ) || (n > 9));
+	} while((n < 3 ) || (n > DIM - 1));
 
 	return 0;
 }
 
-void StampaTabella(int matrice[10][10], int n) {
+void StampaTabella(int matrice[DIM][DIM], int n) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
-			std::cout << matrice[j][i] << " ";
+			printf("%4d", matrice[i][j]);
 		}
 		std::cout << std::endl;
 	}
@@ -21,43 +23,48 @@ void StampaTabella(int matrice[10][10], int n) {
 	return;
 }
 
-void spiralizzatore(int matrice[10][10], int n) {
-	int i = 1, x = n, y = n, j = 0, k = 0, l = 0, m = 0;
+void spiralizzatore(int matrice[DIM][DIM], int n) {
+	int i = 0, c = 0, r = 0, x = n, y = n;
 
-	do {
-		for (j = l; j < x; j++) {
-			matrice[j][k] = i;
-			std::cout << matrice[j][k];
+	while (i <= n * n) {
+		while (c < x) {
 			i++;
+			matrice[r][c] = i;
+			c++;
 		}
-		x--;
-		for (k = m; k < y; k++) {
-			matrice[j][k] = i;
-			std::cout << matrice[j][k];
+		i--;
+		c--;
+		while (r < y) {
 			i++;
+			matrice[r][c] = i;
+			r++;
 		}
+		i--;
+		r--;
 		y--;
-		for (l = j; l >= n - x; l--) {
-			matrice[l][m] = i;
-			std::cout << matrice[l][m];
+		while (c >= n - x) {
 			i++;
+			matrice[r][c] = i;
+			c--;
 		}
+		i--;
+		c++;
 		x--;
-		for (m = k; m >= n - y; m--) {
-			matrice[l][m] = i;
-			std::cout << matrice[l][m];
+		while (r >= n - y) {
 			i++;
+			matrice[r][c] = i;
+			r--;
 		}
-		y--;
-
-	} while (i <= n * n);
+		i--;
+		r++;
+	}
 
 	return;
 }
 
 int main(int argc, char const *argv[]) {
 	int n;
-	int matrice[10][10];
+	int matrice[DIM][DIM];
 
 	input(n);
 	spiralizzatore(matrice, n);
