@@ -51,7 +51,7 @@ void SpiraMatr(int m[][DIM], int nr, int nc) {
 		}
 		c--;
 		r++;
-		//vado in giù sulla colonna
+		//vado in giÃ¹ sulla colonna
 		while (r <= lbr) {
 			m[r][c] = valore;
 			valore++;
