@@ -21,8 +21,7 @@ struct titolo {
 	string quot;
 };
 
-void ControlloFile(struct titolo t[DIM], fstream &file, char nomefile[128]) {
-
+void ControlloFile(fstream &file, char nomefile[128]) {
 	cout << "Inserisci il nome del file da cui prendere i dati: ";
 	cin >> nomefile;
 	file.open(nomefile, ios::in);
@@ -40,7 +39,6 @@ void ControlloFile(struct titolo t[DIM], fstream &file, char nomefile[128]) {
 }
 
 void SoloMax(struct titolo t[DIM], int &numline) {
-
 	for (int i = 0; i < DIM; i++) {
 		for (int j = 0; j < DIM; j++) {
 			if (t[j].codice == t[i].codice) {
@@ -49,7 +47,6 @@ void SoloMax(struct titolo t[DIM], int &numline) {
 				}
 			}
 		}
-		
 	}
 
 	return;
@@ -70,6 +67,7 @@ void LeggoFile(struct titolo t[DIM], fstream &file, char nomefile[128], int &num
 		i++;
 		numline++;
 	}
+
 	return;
 }
 
@@ -127,8 +125,10 @@ void Stampa(struct titolo t[DIM], int numline) {
 		 			mese = "???";
 		 	}
 		 	cout << t[i].nome << " (" << t[i].codice << ") " << t[i].datidata.giorno << " " << mese << " " << t[i].datidata.anno << " " << t[i].quot << endl;
-		}	
+		}
 	}
+
+	return;
 }
 
 int main (int argc, char const *argv[]) {
@@ -138,7 +138,7 @@ int main (int argc, char const *argv[]) {
 	char nomefile[128];
 
 	cout << "Gestore titoli di borsa" << endl;
-	ControlloFile(t, file, nomefile);
+	ControlloFile(file, nomefile);
 	LeggoFile(t, file, nomefile, numline);
 	SoloMax(t, numline);
 	Stampa(t, numline);
