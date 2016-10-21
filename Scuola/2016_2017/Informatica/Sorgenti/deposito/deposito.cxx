@@ -45,13 +45,13 @@ void  deposito::setNumMax(int i) {
 }
 
 
-void ControlloFile(fstream &file, const char *nomefile) {
+void ControlloFile(fstream &f, const char *nomefile) {
 
-	file.open(nomefile, ios::in);
-	if(file.fail()) {
+	f.open(nomefile, ios::in);
+	if(f.fail()) {
 		cout << "Il file " << nomefile << " non esiste!" << endl;
 		cout << "ERRORE" << endl;
-		file.close();
+		f.close();
 		exit(1);
 	} else {
 		cout << "Il file " << nomefile << " e' valido" << endl;
@@ -75,76 +75,90 @@ void ControlloIncongruenzeFileIniziale(deposito d[], fstream &f, int nl) {
 	string riga, saux;
 	int iaux;
 
-	getline(f, riga);
-	istringstream iss(riga);
-	iss >> saux;
+	f >> saux;
 	d[nl].setNomeCitta(saux);
-	iss >> iaux;
+	f >> iaux;
 	d[nl].setNumMax(iaux);
-	iss >> iaux;
+	f >> iaux;
 	d[nl].setNum(iaux);
 	if(d[nl].getNum() > d[nl].getNumMax()) {
 		cout << "Superata capienza veicoli -> linea: " << nl + 1;
 		f.close();
 		exit(1);
 	}
-
-	return;
-}
-
-void LeggoFileIniziale(deposito d[], fstream &f, int &nl) {
-	ControlloIncongruenzeFileIniziale(d, f, nl);
-	while (!f.eof()) {
-		nl++;
-		ControlloIncongruenzeFileIniziale(d, f, nl);
-		if (ControlloCitta(d, d[nl].getNomeCitta(), nl) != -1) {
-			cout << "Citta' gia' presente! -> linea: " << nl + 1;
-			f.close();
-			exit(1);
-		}
-	}
-
-	return;
-}
-
-void ControlloIncongruenzeFileScambio(deposito d[], fstream &f, int nlp, int &nla) {
-	string riga, nomecittaarrivo, nomecittapartenza;
-	int numscambio, pospartenza, posarrivo;
-
-	getline(f, riga);
-	istringstream iss(riga);
-	iss >> nomecittapartenza;
-	if (ControlloCitta(d, nomecittapartenza, nlp) != -1) {
-		pospartenza = ControlloCitta(d, nomecittapartenza, nlp);
-		iss >> nomecittaarrivo;
-		if ((ControlloCitta(d, nomecittaarrivo, nla) != -1) || (nomecittaarrivo != d[pospartenza].getNomeCitta())) {
-			posarrivo = ControlloCitta(d, nomecittaarrivo, nla);
-			iss >> numscambio;
-			if ((numscambio + d[posarrivo].getNum() <= d[posarrivo].getNumMax()) && (numscambio <= d[pospartenza].getNum())) {
-				d[pospartenza].setNum(d[pospartenza].getNum() - numscambio);
-				d[posarrivo].setNum(d[posarrivo].getNum() + numscambio);
-			}
-		} else {
-			cout << "Citta' non esistente o uguale! -> linea: " << nla + 1;
-			f.close();
-			exit(1);
-		}
-	} else {
-		cout << ControlloCitta(d, nomecittapartenza, nlp);
-		cout << "Citta' non esistente! -> linea: " << nlp;
+	if(d[nl].getNum() < 0) {
+		cout << "Numero veicoli negativo! -> linea: " << nl + 1;
 		f.close();
 		exit(1);
 	}
+
+
+	return;
+}
+
+void LeggoFileIniziale(deposito d[], fstream &f, int &nlp) {
+	ControlloIncongruenzeFileIniziale(d, f, nlp);
+	while (!f.eof()) {
+		nlp++;
+		ControlloIncongruenzeFileIniziale(d, f, nlp);
+		if (ControlloCitta(d, d[nlp].getNomeCitta(), nlp) != -1) {
+			cout << "Citta' gia' presente! -> linea: " << nlp + 1;
+			f.close();
+			exit(1);
+		}
+	}
+	f.close();
+
+	return;
+}
+
+void ControlloIncongruenzeFileScambio(deposito d[], fstream &f, int nlp, int nla) {
+	string riga, nomecittaarrivo, nomecittapartenza;
+	int numscambio, pospartenza, posarrivo;
+
+	f >> nomecittapartenza;
+	f >> nomecittaarrivo;
+	f >> numscambio;
+	// cout << nomecittapartenza;
+	// cout << nomecittaarrivo;
+	// cout << numscambio;
+
+	if (ControlloCitta(d, nomecittapartenza, nlp) == -1) {
+		cout<< "Citta' non esistente! -> linea: " <<nla + 1;
+		f.close();
+		exit(1);
+	}
+
+	pospartenza = ControlloCitta(d, nomecittapartenza, nlp);
+
+	if ((ControlloCitta(d, nomecittaarrivo, nlp) == -1) || (nomecittaarrivo == nomecittapartenza)) {
+		cout << "Citta' non esistente o uguale! -> linea: " << nla + 1;
+		f.close();
+		exit(1);
+	}
+
+	posarrivo = ControlloCitta(d, nomecittaarrivo, nlp);
+
+	if ((numscambio + d[posarrivo].getNum() > d[posarrivo].getNumMax()) || (numscambio > d[pospartenza].getNum())) {
+		cout << "Errore numero veicoli! -> linea: " << nla + 1;
+		f.close();
+		exit(1);
+	}
+
+	d[posarrivo].setNum(d[posarrivo].getNum() + numscambio);
+	d[pospartenza].setNum(d[pospartenza].getNum() - numscambio);
 
 	return;
 }
 
 void LeggoFileScambio(deposito d[], fstream &f, int nlp, int &nla) {
 	ControlloIncongruenzeFileScambio(d, f, nlp, nla);
+	//Madonna frau se commento il ciclo while funzia
 	while (!f.eof()) {
 		nla++;
 		ControlloIncongruenzeFileScambio(d, f, nlp, nla);
 	}
+	f.close();
 
 	return;
 }
@@ -152,7 +166,7 @@ void LeggoFileScambio(deposito d[], fstream &f, int nlp, int &nla) {
 void Stampa(deposito d[], int nl) {
 	cout << "Stampa situazione attuale" << endl;
 	for (int i = 0; i < nl; i++) {
-		cout << i + 1 << ") Citta': " << d[i].getNomeCitta() << " Numero massimo veicoli: " << d[i].getNumMax() << " Numero attuale veicoli: " << d[i].getNum() << endl;
+		cout << i + 1 << ") Citta': " << d[i].getNomeCitta() << ", Numero massimo veicoli: " << d[i].getNumMax() << ", Numero attuale veicoli: " << d[i].getNum() << endl;
 	}
 
 	return;
@@ -165,10 +179,11 @@ int main() {
 	int numlinefileiniziale = 0;
 	int numlinefilescambio = 0;
 	fstream fileiniziale, filescambio;
+	//
 	ControlloFile(fileiniziale, nomefileiniziale.c_str());
-
 	LeggoFileIniziale(depositi, fileiniziale, numlinefileiniziale);
 	Stampa(depositi, numlinefileiniziale);
+
 	ControlloFile(filescambio, nomefilescambio.c_str());
 	LeggoFileScambio(depositi, filescambio, numlinefileiniziale, numlinefilescambio);
 	Stampa(depositi, numlinefileiniziale);
