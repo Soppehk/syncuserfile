@@ -154,10 +154,10 @@ void ControlloIncongruenzeFileScambio(deposito d[], fstream &f, int nlp, int nla
 void LeggoFileScambio(deposito d[], fstream &f, int nlp, int &nla) {
 	ControlloIncongruenzeFileScambio(d, f, nlp, nla);
 	//Madonna frau se commento il ciclo while funzia
-	while (!f.eof()) {
+	// while (!f.eof()) {
 		nla++;
 		ControlloIncongruenzeFileScambio(d, f, nlp, nla);
-	}
+	// }
 	f.close();
 
 	return;
@@ -172,6 +172,30 @@ void Stampa(deposito d[], int nl) {
 	return;
 }
 
+void Riscrivi(deposito d[], fstream &f, const char * nomefile, int nl) {
+	cout << "Riscivo file";
+
+	f.open(nomefile, ios::out);
+
+	for (int i = 0; i <= nl; i++) {
+		f << d[i].getNomeCitta() << " " << d[i].getNumMax() << " " << d[i].getNum() << endl;
+	}
+
+	f.close();
+
+	return;
+}
+
+void Menu() {
+	cout << "MENU" << endl;
+	cout << "1) Stampare" << endl;
+	cout << "2) Effettuare spostamenti" << endl;
+	cout << "3) Riscrivere file iniziale" << endl;
+	cout << "4) Esci" << endl;
+
+	return;
+}
+
 int main() {
 	deposito depositi[DIM];
 	string nomefileiniziale = "i.txt";
@@ -179,18 +203,39 @@ int main() {
 	int numlinefileiniziale = 0;
 	int numlinefilescambio = 0;
 	fstream fileiniziale, filescambio;
-	//
+	int scelta;
+
+	cout << "***GESTORE DEPOSITI***" << endl;
+	cout << "Immettere nome file iniziale: ";
+	cin >> nomefileiniziale;
 	ControlloFile(fileiniziale, nomefileiniziale.c_str());
 	LeggoFileIniziale(depositi, fileiniziale, numlinefileiniziale);
-	Stampa(depositi, numlinefileiniziale);
 
-	ControlloFile(filescambio, nomefilescambio.c_str());
-	LeggoFileScambio(depositi, filescambio, numlinefileiniziale, numlinefilescambio);
-	Stampa(depositi, numlinefileiniziale);
+	do {
+		Menu();
+		cout << "Scegli:";
+		do {
+			cout << "==> ";
+			cin >> scelta;
+		} while (scelta <= 0 || scelta > 4);
 
+		switch (scelta) {
+			case 1: cout << "Stampa" << endl;
+				Stampa(depositi, numlinefileiniziale);
+				break;
+			case 2: cout << "Spostamenti" << endl;
+				cout << "Immettere nome file scambi: ";
+				cin >> nomefilescambio;
+				ControlloFile(filescambio, nomefilescambio.c_str());
+				LeggoFileScambio(depositi, filescambio, numlinefileiniziale, numlinefilescambio);
+				break;
+			case 3: cout << "Riscrivi" << endl;
+				Riscrivi(depositi, fileiniziale, nomefileiniziale.c_str(), numlinefileiniziale - 1);
+				break;
+			case 4: cout << "Uscita dal programma" <<endl;
 
-	fileiniziale.close();
-	filescambio.close();
+		}
+	} while(scelta != 4);
 
 	return 0;
 }
