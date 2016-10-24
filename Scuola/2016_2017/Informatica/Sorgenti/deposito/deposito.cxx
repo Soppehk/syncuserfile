@@ -91,8 +91,7 @@ void ControlloIncongruenzeFileIniziale(deposito d[], fstream &f, int nl) {
 		f.close();
 		exit(1);
 	}
-
-
+	
 	return;
 }
 
@@ -119,32 +118,30 @@ void ControlloIncongruenzeFileScambio(deposito d[], fstream &f, int nlp, int nla
 	f >> nomecittapartenza;
 	f >> nomecittaarrivo;
 	f >> numscambio;
-	// cout << nomecittapartenza;
-	// cout << nomecittaarrivo;
-	// cout << numscambio;
 
-	if (ControlloCitta(d, nomecittapartenza, nlp) == -1) {
+	if (ControlloCitta(d, nomecittapartenza, nlp + 1) == -1) {
 		cout<< "Citta' non esistente! -> linea: " <<nla + 1;
 		f.close();
 		exit(1);
 	}
 
-	pospartenza = ControlloCitta(d, nomecittapartenza, nlp);
-
-	if ((ControlloCitta(d, nomecittaarrivo, nlp) == -1) || (nomecittaarrivo == nomecittapartenza)) {
+	pospartenza = ControlloCitta(d, nomecittapartenza, nlp + 1);
+	
+	
+	if ((ControlloCitta(d, nomecittaarrivo, nlp + 1) == -1) || (nomecittaarrivo == nomecittapartenza)) {
 		cout << "Citta' non esistente o uguale! -> linea: " << nla + 1;
 		f.close();
 		exit(1);
 	}
 
-	posarrivo = ControlloCitta(d, nomecittaarrivo, nlp);
+	posarrivo = ControlloCitta(d, nomecittaarrivo, nlp + 1);
 
 	if ((numscambio + d[posarrivo].getNum() > d[posarrivo].getNumMax()) || (numscambio > d[pospartenza].getNum())) {
 		cout << "Errore numero veicoli! -> linea: " << nla + 1;
 		f.close();
 		exit(1);
 	}
-
+	
 	d[posarrivo].setNum(d[posarrivo].getNum() + numscambio);
 	d[pospartenza].setNum(d[pospartenza].getNum() - numscambio);
 
@@ -153,11 +150,10 @@ void ControlloIncongruenzeFileScambio(deposito d[], fstream &f, int nlp, int nla
 
 void LeggoFileScambio(deposito d[], fstream &f, int nlp, int &nla) {
 	ControlloIncongruenzeFileScambio(d, f, nlp, nla);
-	//Madonna frau se commento il ciclo while funzia
-	// while (!f.eof()) {
+	while (!f.eof()) {
 		nla++;
 		ControlloIncongruenzeFileScambio(d, f, nlp, nla);
-	// }
+	}
 	f.close();
 
 	return;
@@ -165,7 +161,7 @@ void LeggoFileScambio(deposito d[], fstream &f, int nlp, int &nla) {
 
 void Stampa(deposito d[], int nl) {
 	cout << "Stampa situazione attuale" << endl;
-	for (int i = 0; i < nl; i++) {
+	for (int i = 0; i <= nl; i++) {
 		cout << i + 1 << ") Citta': " << d[i].getNomeCitta() << ", Numero massimo veicoli: " << d[i].getNumMax() << ", Numero attuale veicoli: " << d[i].getNum() << endl;
 	}
 
@@ -173,8 +169,6 @@ void Stampa(deposito d[], int nl) {
 }
 
 void Riscrivi(deposito d[], fstream &f, const char * nomefile, int nl) {
-	cout << "Riscivo file";
-
 	f.open(nomefile, ios::out);
 
 	for (int i = 0; i <= nl; i++) {
@@ -198,8 +192,8 @@ void Menu() {
 
 int main() {
 	deposito depositi[DIM];
-	string nomefileiniziale = "i.txt";
-	string nomefilescambio = "s.txt";
+	string nomefileiniziale;
+	string nomefilescambio;
 	int numlinefileiniziale = 0;
 	int numlinefilescambio = 0;
 	fstream fileiniziale, filescambio;
@@ -229,8 +223,8 @@ int main() {
 				ControlloFile(filescambio, nomefilescambio.c_str());
 				LeggoFileScambio(depositi, filescambio, numlinefileiniziale, numlinefilescambio);
 				break;
-			case 3: cout << "Riscrivi" << endl;
-				Riscrivi(depositi, fileiniziale, nomefileiniziale.c_str(), numlinefileiniziale - 1);
+			case 3: cout << "Riscrivo file iniziale" << endl;
+				Riscrivi(depositi, fileiniziale, nomefileiniziale.c_str(), numlinefileiniziale );
 				break;
 			case 4: cout << "Uscita dal programma" <<endl;
 
