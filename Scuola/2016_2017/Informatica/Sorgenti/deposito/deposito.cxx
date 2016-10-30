@@ -91,7 +91,7 @@ void ControlloIncongruenzeFileIniziale(deposito d[], fstream &f, int nl) {
 		f.close();
 		exit(1);
 	}
-	
+
 	return;
 }
 
@@ -126,8 +126,8 @@ void ControlloIncongruenzeFileScambio(deposito d[], fstream &f, int nlp, int nla
 	}
 
 	pospartenza = ControlloCitta(d, nomecittapartenza, nlp + 1);
-	
-	
+
+
 	if ((ControlloCitta(d, nomecittaarrivo, nlp + 1) == -1) || (nomecittaarrivo == nomecittapartenza)) {
 		cout << "Citta' non esistente o uguale! -> linea: " << nla + 1;
 		f.close();
@@ -141,7 +141,7 @@ void ControlloIncongruenzeFileScambio(deposito d[], fstream &f, int nlp, int nla
 		f.close();
 		exit(1);
 	}
-	
+
 	d[posarrivo].setNum(d[posarrivo].getNum() + numscambio);
 	d[pospartenza].setNum(d[pospartenza].getNum() - numscambio);
 
