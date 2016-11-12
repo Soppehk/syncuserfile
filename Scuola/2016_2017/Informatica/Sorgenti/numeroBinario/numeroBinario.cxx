@@ -21,11 +21,7 @@ public:
 };
 
 binario::binario() {
-	ne = 0;
-	for (int i = 0; i < DIM; i++) {
-		v[i] = 0;
-		ne++;
-	}
+	azzera();
 }
 
 binario::binario(char *c) {
