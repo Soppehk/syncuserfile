@@ -183,7 +183,7 @@ bool operator <(Orario o1, Orario o2) {
 				if (o1.minuto > o2.minuto) {
 					ctrl = false;
 				} else { //stesso minuto
-					if (o1.secondo <= o2.secondo) {
+					if (o1.secondo < o2.secondo) {
 						ctrl=true;
 					} else {
 						ctrl=false;
